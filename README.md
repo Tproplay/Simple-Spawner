@@ -26,3 +26,10 @@ A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* (RH) that allo
 2. Click on a **Plant** or **Zombie** card to select it.
 3. Close the Almanac and hover your mouse over the battlefield.
 4. Press **`P`** (for plants) or **`O`** (for zombies) to spawn!
+
+### 🛠 How to Build
+1. Open `SimpleSpawner.csproj` in a text editor or Visual Studio.
+2. Locate the `<GamePath>` tag near the top.
+3. Change the path to your actual game directory (e.g., `C:\Games\PvZ Fusion`).
+4. Build the solution in **Release** mode.
+
