@@ -12,9 +12,29 @@ A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* (RH) that allo
 
 | Key | Action |
 | :--- | :--- |
-| **`P`** | **Spawn Plant**: Places the selected plant at the current mouse tile. |
-| **`O`** | **Spawn Zombie**: Spawns the selected zombie at the mouse's row/X-position. |
-| **`I`** | **Freeze/Unfreeze**: Toggles the game's time scale (Pause/Resume). |
+| **`P`** | **Spawn Plant** |
+| **`O`** | **Spawn Zombie** |
+| **`Right Ctrl` + `O`** | **Spawn Hypnotized Zombie** |
+| **`I`** | **Freeze/Unfreeze** |
+| **NumPad 1-9** | **Spawns Items** |
+
+
+**`Numpad1`** -> **Fertilizer**
+
+**`Numpad2`** -> **Bucket**
+
+**`Numpad3`** -> **Helmet**
+
+**`Numpad4`** -> **Jackbox**
+
+**`Numpad5`** -> **Pickaxe**
+
+**`Numpad6`** -> **Machine**
+
+**`Numpad7`** -> **SuperMachine**
+
+**`Numpad8`** -> **PortalHeart**
+
 
 ## 🛠 Installation
 1. Ensure you have **MelonLoader** installed for *PlantsVsZombiesRH*.
