@@ -56,7 +56,7 @@ You can also spawn Items by clicking numbers on numpad (1-9)
 1. Open the **Almanac**.
 2. Click on a **Plant** or **Zombie** card to select it.
 3. Close the Almanac and hover your mouse over the battlefield.
-4. Press **`P`** (for plants) or **`O`** (for zombies) to spawn!
+4. Press **`[`** (for plants) or **`]`** (for zombies) to spawn!
 
 ### 🛠 How to Build
 1. Open `SimpleSpawner.csproj` in a text editor or Visual Studio.
