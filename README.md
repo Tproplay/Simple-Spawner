@@ -12,12 +12,23 @@ A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* (RH) that allo
 
 | Key | Action |
 | :--- | :--- |
-| **`P`** | **Spawn Plant** |
-| **`O`** | **Spawn Zombie** |
-| **`Right Ctrl` + `O`** | **Spawn Hypnotized Zombie** |
-| **`I`** | **Freeze/Unfreeze** |
+| **`[`** | **Spawn Plant** |
+| **`]`** | **Spawn Zombie** |
+| **`Right Ctrl` + `]`** | **Spawn Hypnotized Zombie** |
+| **`\`** | **Freeze/Unfreeze** |
 | **NumPad 1-9** | **Spawns Items** |
 
+You can also spawn Pets by clicking numbers (7-0)
+
+**`7`** -> **PetGargantuar**
+
+**`8`** -> **PetFootball**
+
+**`9`** -> **PetJackbox**
+
+**`0`** -> **PetSnowBoss**
+
+You can also spawn Items by clicking numbers on numpad (1-9)
 
 **`Numpad1`** -> **Fertilizer**
 
