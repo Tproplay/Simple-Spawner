@@ -21,8 +21,10 @@ namespace SimpleSpawner
 
             // --- Input handling for spawning plants and zombies ---
 
-            // -- Press 'P' to spawn a plant at the mouse position if a plant type is selected ---
-            if (UnityEngine.Input.GetKeyDown(KeyCode.P))
+
+
+            // -- Press 'LeftBracket' to spawn a plant at the mouse position if a plant type is selected ---
+            if (UnityEngine.Input.GetKeyDown(KeyCode.LeftBracket))
             {
                 if (plantTypeselected != PlantType.Nothing)
                 {
@@ -31,8 +33,8 @@ namespace SimpleSpawner
                 }
             }
 
-            // -- Press 'Left Control + O' to spawn a zombie with mind control at the mouse position if a zombie type is selected ---
-            else if (UnityEngine.Input.GetKey(KeyCode.RightControl) && UnityEngine.Input.GetKeyDown(KeyCode.O))
+            // -- Press 'Left Control + RightBracket' to spawn a zombie with mind control at the mouse position if a zombie type is selected ---
+            else if (UnityEngine.Input.GetKey(KeyCode.RightControl) && UnityEngine.Input.GetKeyDown(KeyCode.RightBracket))
             {
                 if (zombieTypeselected != ZombieType.Nothing)
                 {
@@ -42,8 +44,8 @@ namespace SimpleSpawner
             }
 
 
-            // -- Press 'O' to spawn a zombie at the mouse position if a zombie type is selected ---
-            else if (!UnityEngine.Input.GetKey(KeyCode.RightControl) && UnityEngine.Input.GetKeyDown(KeyCode.O))
+            // -- Press 'RightBracket' to spawn a zombie at the mouse position if a zombie type is selected ---
+            else if (!UnityEngine.Input.GetKey(KeyCode.RightControl) && UnityEngine.Input.GetKeyDown(KeyCode.RightBracket))
             {
                 if (zombieTypeselected != ZombieType.Nothing)
                 {
@@ -54,8 +56,8 @@ namespace SimpleSpawner
 
 
 
-            // -- Press 'I' to toggle the game's time scale between paused and normal ---
-            else if (UnityEngine.Input.GetKeyDown(KeyCode.I))
+            // -- Press 'Backslash' to toggle the game's time scale between paused and normal ---
+            else if (UnityEngine.Input.GetKeyDown(KeyCode.Backslash))
             {
                 if (UnityEngine.Time.timeScale != 0)
                 {
@@ -68,7 +70,31 @@ namespace SimpleSpawner
                 }
             }
 
+
+            // -- Mini Pets spawning with number keys 7-0 ---
+
+            else if (Input.GetKeyDown(KeyCode.Alpha7))
+            {
+                MiniPet miniPet = MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetGargantuar);
+            }
+
+            else if (Input.GetKeyDown(KeyCode.Alpha8))
+            {
+                MiniPet miniPet = MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetFootball);
+            }
+
+            else if (Input.GetKeyDown(KeyCode.Alpha9))
+            {
+                MiniPet miniPet = MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetJackbox);
+            }
+
+            else if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                MiniPet miniPet = MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetSnowBoss);
+            }
+
             // -- Press number keys 1-9 to spawn specific items at the mouse position ---
+            
             for (int i = 0; i < 9; i++)
             {
                 if (Input.GetKeyDown(KeyCode.Keypad1 + i))
@@ -76,6 +102,8 @@ namespace SimpleSpawner
                     SpawnItem(i);
                 }
             }
+
+            
 
 
         }
