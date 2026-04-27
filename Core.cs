@@ -4,7 +4,7 @@ using HarmonyLib;
 using Il2Cpp;
 
 
-[assembly: MelonInfo(typeof(SimpleSpawner.Core), "Simple Spawner", "3.5", "Tproplay")]
+[assembly: MelonInfo(typeof(SimpleSpawner.Core), "Simple Spawner", "3.6", "Tproplay")]
 [assembly: MelonGame("LanPiaoPiao", "PlantsVsZombiesRH")]
 
 
@@ -94,7 +94,6 @@ namespace SimpleSpawner
             }
 
             // -- Press number keys 1-9 to spawn specific items at the mouse position ---
-            
             for (int i = 0; i < 9; i++)
             {
                 if (Input.GetKeyDown(KeyCode.Keypad1 + i))
@@ -133,29 +132,7 @@ namespace SimpleSpawner
             
         }
 
-
-        // --- Harmony patches to update the selected plant and zombie types when clicking
-        // on Almanac cards or selecting them in the Almanac menus ---
-
-        [HarmonyPatch(typeof(AlmanacCard), "OnMouseDown")]
-        public class AlmanacCard_OnMouseDown_Patch
-        {
-            public static void Postfix(AlmanacCard __instance)
-            {
-                plantTypeselected = (PlantType)(__instance.theSeedType);
-            }
-
-        }
-
-        [HarmonyPatch(typeof(AlmanacCardZombie), "OnMouseDown")]
-        public class AlmanacCardZombie_OnMouseDown_Patch
-        {
-            public static void Postfix(AlmanacCardZombie __instance)
-            {
-                zombieTypeselected = __instance.theZombieType;
-            }
-
-        }
+        // -- Harmony Patches --
 
         [HarmonyPatch(typeof(AlmanacPlantMenu), nameof(AlmanacPlantMenu.SelectCard))]
         public static class AlmanacPlantMenu_SelectCard_Patch
@@ -180,7 +157,6 @@ namespace SimpleSpawner
             }
 
         }
-
-
+        
     }
 }
