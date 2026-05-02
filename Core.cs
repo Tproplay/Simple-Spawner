@@ -98,14 +98,18 @@ namespace SimpleSpawner
             {
                 if (Input.GetKeyDown(KeyCode.Comma))
                 {
+                    ZombiespawnedByMod = true;
                     CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow,
                              ZombieType.ZombieBoss, Mouse.Instance.mouseX);
+                    ZombiespawnedByMod = false;
                 }
 
                 else if (Input.GetKeyDown(KeyCode.Period))
                 {
+                    ZombiespawnedByMod = true;
                     CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow,
                              ZombieType.ZombieBoss2, Mouse.Instance.mouseX);
+                    ZombiespawnedByMod = false;
                 }
             }
 
