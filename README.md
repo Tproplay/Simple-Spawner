@@ -14,6 +14,8 @@ A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* (RH) that allo
 | :--- | :--- |
 | **`[`** | **Spawn Plant** |
 | **`]`** | **Spawn Zombie** |
+| **`;`** | **Delete All Plants** |
+| **`'`** | **Delete All Zombies** |
 | **`Right Ctrl` + `]`** | **Spawn Hypnotized Zombie** |
 | **`\`** | **Freeze/Unfreeze** |
 | **NumPad 1-9** | **Spawns Items** |
