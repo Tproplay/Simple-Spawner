@@ -16,6 +16,7 @@ namespace SimpleSpawner
         public static PlantType plantTypeselected = PlantType.Nothing;
         public static ZombieType zombieTypeselected = ZombieType.Nothing;
 
+        public static bool ZombiespawnedByMod = false;
         public override void OnUpdate()
         {
 
@@ -84,15 +85,49 @@ namespace SimpleSpawner
             {
                 if (zombieTypeselected != ZombieType.Nothing)
                 {
+                    ZombiespawnedByMod = true;
                     CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow,
                          zombieTypeselected, Mouse.Instance.mouseX);
+                    ZombiespawnedByMod = false;
+                }
+            }
+
+            // -- Press 'Slash + Comma' or 'Slash + Period' to spawn a Zombie Boss at the mouse position ---
+
+            else if (Input.GetKey(KeyCode.Slash))
+            {
+                if (Input.GetKeyDown(KeyCode.Comma))
+                {
+                    CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow,
+                             ZombieType.ZombieBoss, Mouse.Instance.mouseX);
+                }
+
+                else if (Input.GetKeyDown(KeyCode.Period))
+                {
+                    CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow,
+                             ZombieType.ZombieBoss2, Mouse.Instance.mouseX);
+                }
+            }
+
+            // -- Press 'Right Control + Comma' or 'Right Control + Period' to spawn a Zombie Boss with mind control at the mouse position ---
+
+            else if (Input.GetKey(KeyCode.RightControl))
+            {
+                if (Input.GetKeyDown(KeyCode.Comma))
+                {
+                    CreateZombie.Instance.SetZombieWithMindControl(Mouse.Instance.theMouseRow,
+                             ZombieType.ZombieBoss, Mouse.Instance.mouseX);
+                }
+                else if (Input.GetKeyDown(KeyCode.Period))
+                {
+                    CreateZombie.Instance.SetZombieWithMindControl(Mouse.Instance.theMouseRow,
+                             ZombieType.ZombieBoss2, Mouse.Instance.mouseX);
                 }
             }
 
 
-            
 
-            
+
 
 
             // -- Mini Pets spawning with number keys 7-0 ---
@@ -124,9 +159,10 @@ namespace SimpleSpawner
                 {
                     SpawnItem(i);
                 }
+
             }
 
-            
+
 
 
         }
@@ -153,7 +189,7 @@ namespace SimpleSpawner
                 item.transform.position = new Vector3(Mouse.Instance.mouseX, Mouse.Instance.mouseY, 0);
                 item.transform.SetParent(GameAPP.board.transform);
             }
-            
+
         }
 
         [HarmonyPatch(typeof(AlmanacPlantMenu), nameof(AlmanacPlantMenu.SelectCard))]
@@ -181,5 +217,57 @@ namespace SimpleSpawner
         }
 
 
+        [HarmonyPatch(typeof(CreateZombie), nameof(CreateZombie.SetZombie))]
+
+        public static class CreateZombie_SetZombie_Patch
+        {
+            [HarmonyPrefix]
+            public static bool Prefix(int theRow, ZombieType theZombieType, float theX)
+            {
+                if (ZombiespawnedByMod) return true;
+                var zombies = UnityEngine.Object.FindObjectsOfType<Zombie>();
+                foreach (var zombie in zombies)
+                {
+                    if (((zombie.theZombieType == ZombieType.ZombieBoss && zombie.isMindControlled) ||
+                        (zombie.theZombieType == ZombieType.ZombieBoss2 && zombie.isMindControlled))
+                        && theX < 5
+                        )
+                    {
+                        CreateZombie.Instance.SetZombieWithMindControl(
+                            theRow, theZombieType, theX);
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
+        [HarmonyPatch(typeof(ZombieBoss))]
+        public static class ZombieBoss_Patch
+        {
+            [HarmonyPatch(nameof(ZombieBoss.AnimPutBall))]
+            [HarmonyPrefix]
+            public static bool Prefix_AnimBall(ZombieBoss __instance)
+            {
+                if (__instance.isMindControlled)
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            [HarmonyPatch(nameof(ZombieBoss.AnimBungi))]
+            [HarmonyPrefix]
+            public static bool Prefix_AnimBungi(ZombieBoss __instance)
+            {
+                if (__instance.isMindControlled)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        
     }
 }
