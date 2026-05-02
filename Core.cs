@@ -1,4 +1,4 @@
-using MelonLoader;
+﻿using MelonLoader;
 using UnityEngine;
 using HarmonyLib;
 using Il2Cpp;
@@ -21,39 +21,27 @@ namespace SimpleSpawner
 
             // --- Input handling for spawning plants and zombies ---
 
-
-
-            // -- Press 'LeftBracket' to spawn a plant at the mouse position if a plant type is selected ---
-            if (UnityEngine.Input.GetKeyDown(KeyCode.LeftBracket))
+            // -- Press 'Semicolon' to delete all plants on the lawn ---
+            if (Input.GetKeyDown(KeyCode.Semicolon))
             {
-                if (plantTypeselected != PlantType.Nothing)
+                var allPlants = UnityEngine.Object.FindObjectsOfType<Plant>();
+
+                foreach (var plant in allPlants)
                 {
-                    CreatePlant.Instance.SetPlant(Mouse.Instance.theMouseColumn,
-                        Mouse.Instance.theMouseRow, plantTypeselected);
+                    plant.Die(Plant.DieReason.BySelf);
                 }
             }
 
-            // -- Press 'Left Control + RightBracket' to spawn a zombie with mind control at the mouse position if a zombie type is selected ---
-            else if (UnityEngine.Input.GetKey(KeyCode.RightControl) && UnityEngine.Input.GetKeyDown(KeyCode.RightBracket))
+            // -- Press 'Quote' to delete all zombies on the lawn ---
+            else if (Input.GetKeyDown(KeyCode.Quote))
             {
-                if (zombieTypeselected != ZombieType.Nothing)
+                var allZombies = UnityEngine.Object.FindObjectsOfType<Zombie>();
+
+                foreach (var zombie in allZombies)
                 {
-                    CreateZombie.Instance.SetZombieWithMindControl(Mouse.Instance.theMouseRow,
-                         zombieTypeselected, Mouse.Instance.mouseX);
+                    zombie.theHealth = 0;
                 }
             }
-
-
-            // -- Press 'RightBracket' to spawn a zombie at the mouse position if a zombie type is selected ---
-            else if (!UnityEngine.Input.GetKey(KeyCode.RightControl) && UnityEngine.Input.GetKeyDown(KeyCode.RightBracket))
-            {
-                if (zombieTypeselected != ZombieType.Nothing)
-                {
-                    CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow,
-                         zombieTypeselected, Mouse.Instance.mouseX);
-                }
-            }
-
 
 
             // -- Press 'Backslash' to toggle the game's time scale between paused and normal ---
@@ -69,6 +57,42 @@ namespace SimpleSpawner
                     UnityEngine.Time.timeScale = 1;
                 }
             }
+
+            // -- Press 'Left Bracket' to spawn a plant at the mouse position if a plant type is selected ---
+            else if (UnityEngine.Input.GetKeyDown(KeyCode.LeftBracket))
+            {
+                if (plantTypeselected != PlantType.Nothing)
+                {
+                    CreatePlant.Instance.SetPlant(Mouse.Instance.theMouseColumn,
+                        Mouse.Instance.theMouseRow, plantTypeselected);
+                }
+            }
+
+            // -- Press 'Left Control + O' to spawn a zombie with mind control at the mouse position if a zombie type is selected ---
+            else if (UnityEngine.Input.GetKey(KeyCode.RightControl) && UnityEngine.Input.GetKeyDown(KeyCode.RightBracket))
+            {
+                if (zombieTypeselected != ZombieType.Nothing)
+                {
+                    CreateZombie.Instance.SetZombieWithMindControl(Mouse.Instance.theMouseRow,
+                         zombieTypeselected, Mouse.Instance.mouseX);
+                }
+            }
+
+
+            // -- Press 'Right Control + Right Bracket' to spawn a zombie at the mouse position if a zombie type is selected ---
+            else if (!UnityEngine.Input.GetKey(KeyCode.RightControl) && UnityEngine.Input.GetKeyDown(KeyCode.RightBracket))
+            {
+                if (zombieTypeselected != ZombieType.Nothing)
+                {
+                    CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow,
+                         zombieTypeselected, Mouse.Instance.mouseX);
+                }
+            }
+
+
+            
+
+            
 
 
             // -- Mini Pets spawning with number keys 7-0 ---
@@ -132,8 +156,6 @@ namespace SimpleSpawner
             
         }
 
-        // -- Harmony Patches --
-
         [HarmonyPatch(typeof(AlmanacPlantMenu), nameof(AlmanacPlantMenu.SelectCard))]
         public static class AlmanacPlantMenu_SelectCard_Patch
         {
@@ -157,6 +179,7 @@ namespace SimpleSpawner
             }
 
         }
-        
+
+
     }
 }
