@@ -19,6 +19,8 @@ A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* (RH) that allo
 | **`Right Ctrl` + `]`** | **Spawn Hypnotized Zombie** |
 | **`\`** | **Freeze/Unfreeze** |
 | **NumPad 1-9** | **Spawns Items** |
+| **`/` + `,` or `.`** | **Spawn Zomboss 1 or 2** |
+| **`Right Ctrl` + `,` or `.`** | **Spawn Hypnotized Zomboss** |
 
 You can also spawn Pets by clicking numbers (7-0)
 
