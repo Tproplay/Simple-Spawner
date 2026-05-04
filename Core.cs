@@ -134,16 +134,21 @@ namespace SimpleSpawner
 
 
 
-            // -- Mini Pets spawning with number keys 7-0 ---
+            // -- Mini Pets spawning with number keys 6-0 ---
 
-            else if (Input.GetKeyDown(KeyCode.Alpha7))
+            else if (Input.GetKeyDown(KeyCode.Alpha6))
             {
                 MiniPet miniPet = MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetGargantuar);
             }
 
-            else if (Input.GetKeyDown(KeyCode.Alpha8))
+            else if (Input.GetKeyDown(KeyCode.Alpha7))
             {
                 MiniPet miniPet = MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetFootball);
+            }
+
+            else if (Input.GetKeyDown(KeyCode.Alpha8))
+            {
+                MiniPet miniPet = MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetDrown);
             }
 
             else if (Input.GetKeyDown(KeyCode.Alpha9))
