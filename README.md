@@ -50,6 +50,7 @@ You can also spawn Items by clicking numbers on numpad (1-9)
 
 **`Numpad8`** -> **PortalHeart**
 
+**You can Customize these keys by editing `UserData\MelonPreferences.cfg`**
 
 ## 🛠 Installation
 1. Ensure you have **MelonLoader** installed for *PlantsVsZombiesRH*.
