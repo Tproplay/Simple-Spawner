@@ -1,3 +1,7 @@
 <Solution>
+  <Configurations>
+    <BuildType Name="Bepinex" />
+    <BuildType Name="Melonloader" />
+  </Configurations>
   <Project Path="SimpleSpawner.csproj" Id="3cbb4d69-7e61-4c64-8db0-f68d0197226e" />
 </Solution>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -13,69 +12,98 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    
-    <!-- EDIT THIS PATH TO MATCH YOUR GAME FOLDER -->
-    <GamePath>C:\Games\Pvz\Fusion RH\3.5</GamePath>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Melonloader|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>bin\Melonloader\</OutputPath>
+    <DefineConstants>TRACE;MELONLOADER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Bepinex|AnyCPU'">
+    <OutputPath>bin\Bepinex\</OutputPath>
+    <DefineConstants>TRACE;BEPINEX</DefineConstants>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Include="src\Config.cs" />
+    <Compile Include="src\Core.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Magnetar.cs" />
+    <Compile Include="src\UpdateHandler.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="$(Configuration.Contains('Melon'))">
     <Reference Include="0Harmony">
-      <HintPath>$(GamePath)\MelonLoader\net6\0Harmony.dll</HintPath>
+      <HintPath>References\Melonloader\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>$(GamePath)\MelonLoader\Il2CppAssemblies\Assembly-CSharp.dll</HintPath>
+      <HintPath>References\Melonloader\Il2Cpp\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Common">
+      <HintPath>References\Melonloader\Il2CppInterop.Common.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppInterop.Runtime">
-      <HintPath>$(GamePath)\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>
+      <HintPath>References\Melonloader\Il2CppInterop.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Il2Cppmscorlib">
-      <HintPath>$(GamePath)\MelonLoader\Il2CppAssemblies\Il2Cppmscorlib.dll</HintPath>
+      <HintPath>References\Melonloader\Il2Cpp\Il2Cppmscorlib.dll</HintPath>
     </Reference>
     <Reference Include="MelonLoader">
-      <HintPath>$(GamePath)\MelonLoader\net6\MelonLoader.dll</HintPath>
+      <HintPath>References\Melonloader\MelonLoader.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>$(GamePath)\MelonLoader\Il2CppAssemblies\UnityEngine.dll</HintPath>
+      <HintPath>References\Melonloader\Il2Cpp\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(GamePath)\MelonLoader\Il2CppAssemblies\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>References\Melonloader\Il2Cpp\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>References\Melonloader\Il2Cpp\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>$(GamePath)\MelonLoader\Il2CppAssemblies\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>References\Melonloader\Il2Cpp\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.InputModule">
-      <HintPath>$(GamePath)\MelonLoader\Il2CppAssemblies\UnityEngine.InputModule.dll</HintPath>
+  </ItemGroup>
+  <ItemGroup Condition="$(Configuration.Contains('Bepinex'))">
+    <Reference Include="0Harmony">
+      <HintPath>References\Bepinex\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>References\Bepinex\Il2Cpp\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx.Core">
+      <HintPath>References\Bepinex\BepInEx.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx.Unity.IL2CPP">
+      <HintPath>References\Bepinex\BepInEx.Unity.IL2CPP.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Common">
+      <HintPath>References\Bepinex\Il2CppInterop.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Runtime">
+      <HintPath>References\Bepinex\Il2CppInterop.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>References\Bepinex\Il2Cpp\Il2Cppmscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>References\Bepinex\Il2Cpp\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>References\Bepinex\Il2Cpp\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>References\Bepinex\Il2Cpp\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>References\Bepinex\Il2Cpp\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Reference Include="Magnetar Client">
+      <HintPath>References\Magnetar Client.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
