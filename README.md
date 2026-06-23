@@ -1,14 +1,16 @@
 # Simple Spawner
 
-A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* (RH) that allows you to manually spawn any plant or zombie by selecting them from the Almanac.
+A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* that allows you to manually spawn any plant or zombie by selecting them from the Almanac.
 
 ## 🚀 Features
+
 - **Instant Spawning**: Place plants or spawn zombies exactly where your mouse is.
 - **Selection System**: Pick any entity by simply clicking its card in the Almanac.
 - **Time Control**: Pause and resume the game with a single keystroke.
-
+- **Supports Magnetar Client**: This mod is compatible with [Magnetar Client](https://github.com/Tproplay/Magnetar-Client) GUI.
 ## 🎮 Controls
 
+### Main Controls
 
 | Key | Action |
 | :--- | :--- |
@@ -17,38 +19,39 @@ A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* (RH) that allo
 | **`;`** | **Delete All Plants** |
 | **`'`** | **Delete All Zombies** |
 | **`Right Ctrl` + `]`** | **Spawn Hypnotized Zombie** |
-| **`\`** | **Freeze/Unfreeze** |
-| **NumPad 1-9** | **Spawns Items** |
-| **`/` + `,` or `.`** | **Spawn Zomboss 1 or 2** |
-| **`Right Ctrl` + `,` or `.`** | **Spawn Hypnotized Zomboss** |
+| **`\`** | **Freeze/Unfreeze (Toggle Time Scale)** |
+| **`/` + `,`** | **Spawn Zomboss 1** |
+| **`/` + `.`** | **Spawn Zomboss 2** |
+| **`Right Ctrl` + `,`** | **Spawn Hypnotized Zomboss 1** |
+| **`Right Ctrl` + `.`** | **Spawn Hypnotized Zomboss 2** |
 
-You can also spawn Pets by clicking numbers (7-0)
+### Pet Spawning
+*Note: You must hold the **`Right Ctrl`** prefix key while pressing the Numpad keys below to spawn pets.*
 
-**`7`** -> **PetGargantuar**
+| Key Combo | Action |
+| :--- | :--- |
+| **`Right Ctrl` + `Numpad 1`** | **Spawn Pet Gargantuar** |
+| **`Right Ctrl` + `Numpad 2`** | **Spawn Pet Football** |
+| **`Right Ctrl` + `Numpad 3`** | **Spawn Pet Drown** |
+| **`Right Ctrl` + `Numpad 4`** | **Spawn Pet Jackbox** |
+| **`Right Ctrl` + `Numpad 5`** | **Spawn Pet Snow Boss** |
+| **`Right Ctrl` + `Numpad 6`** | **Spawn Pet Horse** |
+| **`Right Ctrl` + `Numpad 7`** | **Spawn Pet Imp** |
+| **`Right Ctrl` + `Numpad 8`** | **Spawn Pet Kirov** |
 
-**`8`** -> **PetFootball**
+### Item Spawning
 
-**`9`** -> **PetJackbox**
-
-**`0`** -> **PetSnowBoss**
-
-You can also spawn Items by clicking numbers on numpad (1-9)
-
-**`Numpad1`** -> **Fertilizer**
-
-**`Numpad2`** -> **Bucket**
-
-**`Numpad3`** -> **Helmet**
-
-**`Numpad4`** -> **Jackbox**
-
-**`Numpad5`** -> **Pickaxe**
-
-**`Numpad6`** -> **Machine**
-
-**`Numpad7`** -> **SuperMachine**
-
-**`Numpad8`** -> **PortalHeart**
+| Key | Action |
+| :--- | :--- |
+| **`Numpad 1`** | **Spawn Fertilizer** |
+| **`Numpad 2`** | **Spawn Bucket** |
+| **`Numpad 3`** | **Spawn Helmet** |
+| **`Numpad 4`** | **Spawn Jackbox** |
+| **`Numpad 5`** | **Spawn Pickaxe** |
+| **`Numpad 6`** | **Spawn Machine** |
+| **`Numpad 7`** | **Spawn Super Machine** |
+| **`Numpad 8`** | **Spawn Portal Heart** |
+| **`Numpad 9`** | **Spawn Sprout Pot Prize** |
 
 **You can Customize these keys by editing `UserData\MelonPreferences.cfg`**
 
@@ -62,10 +65,4 @@ You can also spawn Items by clicking numbers on numpad (1-9)
 2. Click on a **Plant** or **Zombie** card to select it.
 3. Close the Almanac and hover your mouse over the battlefield.
 4. Press **`[`** (for plants) or **`]`** (for zombies) to spawn!
-
-### 🛠 How to Build
-1. Open `SimpleSpawner.csproj` in a text editor or Visual Studio.
-2. Locate the `<GamePath>` tag near the top.
-3. Change the path to your actual game directory (e.g., `C:\Games\PvZ Fusion`).
-4. Build the solution in **Release** mode.
 
