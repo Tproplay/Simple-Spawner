@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using HarmonyLib;
+
 #if MELONLOADER
 using Il2Cpp;
 #endif
@@ -148,6 +149,10 @@ namespace SimpleSpawner
                 GameObject item = UnityEngine.Object.Instantiate(prefab);
                 item.transform.position = new Vector3(Mouse.Instance.mouseX, Mouse.Instance.mouseY, 0);
                 item.transform.SetParent(GameAPP.board.transform);
+            }
+            else if (Core.MagnetarLoaded)
+            {
+                Magnetar_Client.Utils.Magnetar_Logger.DebugLogger.Msg($"[Simple Spawner] No prefab at path: {resourcePath}"); 
             }
         }
 

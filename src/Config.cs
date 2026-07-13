@@ -40,6 +40,7 @@ namespace SimpleSpawner
         public static MelonPreferences_Entry<KeyCode> keySpawnSuperMachine;
         public static MelonPreferences_Entry<KeyCode> keySpawnPortalHeart;
         public static MelonPreferences_Entry<KeyCode> keySpawnSproutPotPrize;
+        public static MelonPreferences_Entry<KeyCode> keySpawnZombieFertilizer;
 #elif BEPINEX
         public static ConfigEntry<KeyCode> keyDeleteAllPlants;
         public static ConfigEntry<KeyCode> keyDeleteAllZombies;
@@ -70,6 +71,7 @@ namespace SimpleSpawner
         public static ConfigEntry<KeyCode> keySpawnSuperMachine;
         public static ConfigEntry<KeyCode> keySpawnPortalHeart;
         public static ConfigEntry<KeyCode> keySpawnSproutPotPrize;
+        public static ConfigEntry<KeyCode> keySpawnZombieFertilizer;
 #endif
 
         public static void Initialize()
@@ -167,7 +169,7 @@ namespace SimpleSpawner
                 return true_if_none;
             }
 
-            return Input.GetKeyDown(fallbackKey);
+            return Input.GetKey(fallbackKey);
         }
 
         public static bool CheckActive()
