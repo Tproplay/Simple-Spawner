@@ -12,18 +12,25 @@ A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* that allows yo
 
 ### Main Controls
 
-| Key | Action |
+| Key / Combo | Action |
 | :--- | :--- |
-| **`[`** | **Spawn Plant** |
-| **`]`** | **Spawn Zombie** |
-| **`;`** | **Delete All Plants** |
-| **`'`** | **Delete All Zombies** |
-| **`Right Ctrl` + `]`** | **Spawn Hypnotized Zombie** |
-| **`\`** | **Freeze/Unfreeze (Toggle Time Scale)** |
-| **`/` + `,`** | **Spawn Zomboss 1** |
-| **`/` + `.`** | **Spawn Zomboss 2** |
-| **`Right Ctrl` + `,`** | **Spawn Hypnotized Zomboss 1** |
-| **`Right Ctrl` + `.`** | **Spawn Hypnotized Zomboss 2** |
+| `[` | Spawn Plant |
+| `]` | Spawn Zombie |
+| `;` | Delete All Plants |
+| `'` | Delete All Zombies |
+| `\` | Freeze/Unfreeze (Toggle Time Scale) |
+| `Right Ctrl` + `]` | Spawn Hypnotized Zombie |
+| `/` + `,` | Spawn Zomboss 1 |
+| `/` + `.` | Spawn Zomboss 2 |
+| `Right Ctrl` + `,` | Spawn Hypnotized Zomboss 1 |
+| `Right Ctrl` + `.` | Spawn Hypnotized Zomboss 2 |
+| `,` + `[` | Spawn Plant pot |
+| `,` + `]` | Spawn Zombie pot |
+| `Right Ctrl` + `,` + `]` | Spawn Hypno Zombie pot |
+| `,` + `/` + `,` | Spawn Zomboss 1 pot |
+| `,` + `/` + `.` | Spawn Zomboss 2 pot |
+| `Right Ctrl` + `/` + `,` | Spawn Hypno Zomboss 1 pot |
+| `Right Ctrl` + `/` + `.` | Spawn Hypno Zomboss 2 pot |
 
 ### Pet Spawning
 *Note: You must hold the **`Right Ctrl`** prefix key while pressing the Numpad keys below to spawn pets.*
