@@ -1,11 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 using Magnetar_Client.Modules;
 #if MELONLOADER
-using MelonLoader;
-#elif BEPINEX
-using BepInEx.Configuration;
+using Il2Cpp;
 #endif
 
 namespace SimpleSpawner
@@ -16,7 +17,7 @@ namespace SimpleSpawner
         {
             try
             {
-                return System.AppDomain.CurrentDomain.GetAssemblies()
+                return AppDomain.CurrentDomain.GetAssemblies()
                     .Any(a => a.GetName().Name == "Magnetar Client" || a.GetName().Name == "Magnetar_Client");
             }
             catch { return false; }
@@ -30,37 +31,21 @@ namespace SimpleSpawner
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static bool GetKeyDown(string id, bool true_if_none)
+        public static bool GetKeyDown(string id, bool trueIfNone)
         {
             if (SimpleSpawnerModule.instance != null && SimpleSpawnerModule.instance.Binds.TryGetValue(id, out var bind))
             {
-                if (bind.BindKeys == null || bind.BindKeys.Count == 0 || bind.BindKeys[0] == KeyCode.None)
-                {
-                    return true_if_none;
-                }
-
-                foreach (var key in bind.BindKeys)
-                {
-                    if (Input.GetKeyDown(key)) return true;
-                }
+                return Config.CheckChordDown(bind.BindKeys, trueIfNone);
             }
             return false;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static bool GetKey(string id, bool true_if_none)
+        public static bool GetKey(string id, bool trueIfNone)
         {
             if (SimpleSpawnerModule.instance != null && SimpleSpawnerModule.instance.Binds.TryGetValue(id, out var bind))
             {
-                if (bind.BindKeys == null || bind.BindKeys.Count == 0 || bind.BindKeys[0] == KeyCode.None)
-                {
-                    return true_if_none;
-                }
-
-                foreach (var key in bind.BindKeys)
-                {
-                    if (Input.GetKey(key)) return true;
-                }
+                return Config.CheckChordHeld(bind.BindKeys, trueIfNone);
             }
             return false;
         }
@@ -72,40 +57,76 @@ namespace SimpleSpawner
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void SyncPlantSelection(PlantType plantType)
+        {
+            var module = SimpleSpawnerModule.instance;
+            if (module?.PlantSelectedSetting == null) return;
+
+            module.isSyncing = true;
+            try
+            {
+                foreach (int val in module.PlantSelectedSetting.SelectedValues.ToList())
+                {
+                    if (val != (int)plantType) module.PlantSelectedSetting.Deselect(val);
+                }
+
+                if (plantType != PlantType.Nothing)
+                {
+                    module.PlantSelectedSetting.Select((int)plantType);
+                }
+            }
+            finally
+            {
+                module.isSyncing = false;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void SyncZombieSelection(ZombieType zombieType)
+        {
+            var module = SimpleSpawnerModule.instance;
+            if (module?.ZombieSelectedSetting == null) return;
+
+            module.isSyncing = true;
+            try
+            {
+                foreach (int val in module.ZombieSelectedSetting.SelectedValues.ToList())
+                {
+                    if (val != (int)zombieType) module.ZombieSelectedSetting.Deselect(val);
+                }
+
+                if (zombieType != ZombieType.Nothing)
+                {
+                    module.ZombieSelectedSetting.Select((int)zombieType);
+                }
+            }
+            finally
+            {
+                module.isSyncing = false;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static void SyncIfDirty()
         {
             if (SimpleSpawnerModule.instance == null) return;
             bool dirty = false;
 
-            dirty |= UpdateKey(Config.keyDeleteAllPlants, "DeleteAllPlants");
-            dirty |= UpdateKey(Config.keyDeleteAllZombies, "DeleteAllZombies");
-            dirty |= UpdateKey(Config.keyToggleTimeScale, "ToggleTimeScale");
-            dirty |= UpdateKey(Config.keySpawnPlant, "SpawnPlant");
-            dirty |= UpdateKey(Config.keySpawnZombie, "SpawnZombie");
-            dirty |= UpdateKey(Config.keyMindControlModifier, "MindControlModifier");
-            dirty |= UpdateKey(Config.keyBossModifier, "BossModifier");
-            dirty |= UpdateKey(Config.keySpawnBoss1, "SpawnBoss1");
-            dirty |= UpdateKey(Config.keySpawnBoss2, "SpawnBoss2");
+            foreach (var bind in Config.AllBinds)
+            {
+                if (SimpleSpawnerModule.instance.Binds.TryGetValue(bind.Id, out var magnetarBind))
+                {
+                    var magnetarKeys = magnetarBind.BindKeys ?? new List<KeyCode>();
+                    string magnetarSerialized = Config.SerializeKeys(magnetarKeys);
+                    string currentSerialized = Config.SerializeKeys(bind.Keys);
 
-            dirty |= UpdateKey(Config.keyPetPre, "PetPre");
-            dirty |= UpdateKey(Config.keyPetGargantuar, "PetGargantuar");
-            dirty |= UpdateKey(Config.keyPetFootball, "PetFootball");
-            dirty |= UpdateKey(Config.keyPetDrown, "PetDrown");
-            dirty |= UpdateKey(Config.keyPetJackbox, "PetJackbox");
-            dirty |= UpdateKey(Config.keyPetSnowBoss, "PetSnowBoss");
-            dirty |= UpdateKey(Config.keyPetHorse, "PetHorse");
-            dirty |= UpdateKey(Config.keyPetImp, "PetImp");
-            dirty |= UpdateKey(Config.keyPetKirov, "PetKirov");
-
-            dirty |= UpdateKey(Config.keySpawnFertilizer, "SpawnFertilizer");
-            dirty |= UpdateKey(Config.keySpawnBucket, "SpawnBucket");
-            dirty |= UpdateKey(Config.keySpawnHelmet, "SpawnHelmet");
-            dirty |= UpdateKey(Config.keySpawnJackbox, "SpawnJackbox");
-            dirty |= UpdateKey(Config.keySpawnPickaxe, "SpawnPickaxe");
-            dirty |= UpdateKey(Config.keySpawnMachine, "SpawnMachine");
-            dirty |= UpdateKey(Config.keySpawnSuperMachine, "SpawnSuperMachine");
-            dirty |= UpdateKey(Config.keySpawnPortalHeart, "SpawnPortalHeart");
-            dirty |= UpdateKey(Config.keySpawnSproutPotPrize, "SpawnSproutPotPrize");
+                    if (magnetarSerialized != currentSerialized)
+                    {
+                        bind.SetKeys(magnetarKeys);
+                        dirty = true;
+                    }
+                }
+            }
 
             if (dirty)
             {
@@ -117,106 +138,116 @@ namespace SimpleSpawner
             }
         }
 
-#if MELONLOADER
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool UpdateKey(MelonPreferences_Entry<KeyCode> entry, string bindId)
-        {
-            if (SimpleSpawnerModule.instance.Binds.TryGetValue(bindId, out var bind))
-            {
-                KeyCode updatedKey = bind.BindKeys.Count > 0 ? bind.BindKeys[0] : KeyCode.None;
-                if (entry.Value != updatedKey)
-                {
-                    entry.Value = updatedKey;
-                    return true;
-                }
-            }
-            return false;
-        }
-#elif BEPINEX
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool UpdateKey(ConfigEntry<KeyCode> entry, string bindId)
-        {
-            if (SimpleSpawnerModule.instance.Binds.TryGetValue(bindId, out var bind))
-            {
-                KeyCode updatedKey = bind.BindKeys.Count > 0 ? bind.BindKeys[0] : KeyCode.None;
-                if (entry.Value != updatedKey)
-                {
-                    entry.Value = updatedKey;
-                    return true;
-                }
-            }
-            return false;
-        }
-#endif
-
         public class SimpleSpawnerModule : Magnetar_Client.Modules.Module
         {
             public override string Name { get; set; } = "Simple Spawner";
-            public override string Description { get; set; } = "A <color=red>simple spawner</color> mod for Pvz fusion.\n" +
-                "<b>Note:</b> Multi keybinds like (alt+ctrl+a) is not supported.";
+            public override string Description { get; set; } = "A <color=red>Simple Spawner</color> mod for Pvz Fusion.";
             public override string Author { get; set; } = "Tproplay";
-            public override string SearchHints { get; set; } = "simplespawner spawnmod pvzfusion spawner" +
-                " spawnmenu spawnitems unitspawner spawnzombies spawnplants entityspawner spawncheat" +
-                " itemspawner spawntool summoner summonsummon simple-spawner fusion-spawner spawnpvz " +
-                "entitysummon spawnmanager summonmod spawnconfig spawnsettings spawncontroller";
+            public override string SearchHints { get; set; } = "simplespawner spawnmod pvzfusion spawner unitspawner spawnzombies spawnplants";
             public override ModuleCategory Category { get; set; } = ModuleCategory.Addon;
             public override bool Active { get; set; } = true;
 
             public static SimpleSpawnerModule instance;
-            public System.Collections.Generic.Dictionary<string, BindSetting> Binds = 
-                new System.Collections.Generic.Dictionary<string, BindSetting>();
+            public Dictionary<string, BindSetting> Binds = new Dictionary<string, BindSetting>();
+
+            public MultiSelectSetting PlantSelectedSetting;
+            public MultiSelectSetting ZombieSelectedSetting;
+            public bool isSyncing = false;
 
             public SimpleSpawnerModule()
             {
                 instance = this;
-                CreateCategory("General");
-                AddBind("SpawnPlant", "Spawn plant", Config.keySpawnPlant.Value);
-                AddBind("SpawnZombie", "Spawn zombie", Config.keySpawnZombie.Value);
-                AddBind("DeleteAllPlants", "Delete all plants", Config.keyDeleteAllPlants.Value);
-                AddBind("DeleteAllZombies", "Delete all zombies", Config.keyDeleteAllZombies.Value);
+
+                // --- 1. Entity Selection Category ---
+                CreateCategory("Entities");
+
+                PlantSelectedSetting = new MultiSelectSetting("Select Plant", typeof(PlantType))
+                {
+                    MaxSelection = 1,
+                    CustomNames = TranslatedNames(typeof(PlantType)),
+                    Blacklist = new HashSet<int>
+                    {
+                        (int)PlantType.Nothing,
+                        257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268,
+                        246, 247, 3000
+                    }
+                };
+                PlantSelectedSetting.Blacklist.Add((int)PlantType.Nothing);
+                PlantSelectedSetting.OnSelectionChanged = (id, selected) =>
+                {
+                    if (isSyncing) return;
+                    if (selected)
+                    {
+                        UpdateHandler.plantTypeselected = (PlantType)id;
+                        foreach (int val in PlantSelectedSetting.SelectedValues.ToList())
+                        {
+                            if (val != id) PlantSelectedSetting.Deselect(val);
+                        }
+                    }
+                    else if ((int)UpdateHandler.plantTypeselected == id)
+                    {
+                        UpdateHandler.plantTypeselected = PlantType.Nothing;
+                    }
+                };
+                AddSettings(PlantSelectedSetting);
+
+                ZombieSelectedSetting = new MultiSelectSetting("Select Zombie", typeof(ZombieType))
+                {
+                    MaxSelection = 1,
+                    CustomNames = TranslatedNames(typeof(ZombieType)),
+                    Blacklist = new HashSet<int>
+                    {
+                        (int)ZombieType.Nothing
+                    }
+                };
+                ZombieSelectedSetting.Blacklist.Add((int)ZombieType.Nothing);
+                ZombieSelectedSetting.OnSelectionChanged = (id, selected) =>
+                {
+                    if (isSyncing) return;
+                    if (selected)
+                    {
+                        UpdateHandler.zombieTypeselected = (ZombieType)id;
+                        foreach (int val in ZombieSelectedSetting.SelectedValues.ToList())
+                        {
+                            if (val != id) ZombieSelectedSetting.Deselect(val);
+                        }
+                    }
+                    else if ((int)UpdateHandler.zombieTypeselected == id)
+                    {
+                        UpdateHandler.zombieTypeselected = ZombieType.Nothing;
+                    }
+                };
+                AddSettings(ZombieSelectedSetting);
+
                 EndCategory();
 
-                CreateCategory("Pets");
-                AddBind("PetPre", "Pet Spawn Prefix", Config.keyPetPre.Value);
-                AddBind("PetGargantuar", "Spawn pet gargantuar", Config.keyPetGargantuar.Value);
-                AddBind("PetFootball", "Spawn pet football", Config.keyPetFootball.Value);
-                AddBind("PetDrown", "Spawn pet drown", Config.keyPetDrown.Value);
-                AddBind("PetJackbox", "Spawn pet jackbox", Config.keyPetJackbox.Value);
-                AddBind("PetSnowBoss", "Spawn pet snow boss", Config.keyPetSnowBoss.Value);
-                AddBind("PetHorse", "Spawn pet horse", Config.keyPetHorse.Value);
-                AddBind("PetImp", "Spawn pet imp", Config.keyPetImp.Value);
-                AddBind("PetKirov", "Spawn pet kirov", Config.keyPetKirov.Value);
-                EndCategory();
-
-                CreateCategory("Extra");
-                AddBind("ToggleTimeScale", "Toggle time scale", Config.keyToggleTimeScale.Value);
-                AddBind("MindControlModifier", "Mind control modifier", Config.keyMindControlModifier.Value);
-                AddBind("BossModifier", "Boss modifier", Config.keyBossModifier.Value);
-                AddBind("SpawnBoss1", "Spawn boss 1", Config.keySpawnBoss1.Value);
-                AddBind("SpawnBoss2", "Spawn boss 2", Config.keySpawnBoss2.Value);
-                EndCategory();
-
-                CreateCategory("Items");
-                AddBind("SpawnFertilizer", "Spawn fertilizer", Config.keySpawnFertilizer.Value);
-                AddBind("SpawnBucket", "Spawn bucket", Config.keySpawnBucket.Value);
-                AddBind("SpawnHelmet", "Spawn helmet", Config.keySpawnHelmet.Value);
-                AddBind("SpawnJackbox", "Spawn jackbox", Config.keySpawnJackbox.Value);
-                AddBind("SpawnPickaxe", "Spawn pickaxe", Config.keySpawnPickaxe.Value);
-                AddBind("SpawnMachine", "Spawn machine", Config.keySpawnMachine.Value);
-                AddBind("SpawnSuperMachine", "Spawn super machine", Config.keySpawnSuperMachine.Value);
-                AddBind("SpawnPortalHeart", "Spawn portal heart", Config.keySpawnPortalHeart.Value);
-                AddBind("SpawnSproutPotPrize", "Spawn sprout pot prize", Config.keySpawnSproutPotPrize.Value);
-                EndCategory();
+                // --- 2. Dynamic Keybind Categories ---
+                var categories = Config.AllBinds.GroupBy(b => b.Category);
+                foreach (var group in categories)
+                {
+                    CreateCategory(group.Key);
+                    foreach (var bindDef in group)
+                    {
+                        AddBind(bindDef);
+                    }
+                    EndCategory();
+                }
             }
 
-            private void AddBind(string id, string displayName, KeyCode defaultKey)
+            public override void OnLanguageChanged()
             {
-                var keyList = defaultKey == KeyCode.None ?
-                    new System.Collections.Generic.List<KeyCode>() :
-                    new System.Collections.Generic.List<KeyCode> { defaultKey };
+                base.OnLanguageChanged();
+                if (PlantSelectedSetting != null)
+                    PlantSelectedSetting.CustomNames = TranslatedNames(typeof(PlantType));
+                if (ZombieSelectedSetting != null)
+                    ZombieSelectedSetting.CustomNames = TranslatedNames(typeof(ZombieType));
+            }
 
-                var bind = new BindSetting(displayName, keyList);
-                Binds[id] = bind;
+            private void AddBind(KeyBind keyBind)
+            {
+                var keyList = new List<KeyCode>(keyBind.Keys);
+                var bind = new BindSetting(keyBind.DisplayName, keyList);
+                Binds[keyBind.Id] = bind;
                 AddSettings(bind);
             }
         }

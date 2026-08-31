@@ -26,6 +26,16 @@
     <DefineConstants>TRACE;BEPINEX</DefineConstants>
     <Optimize>true</Optimize>
   </PropertyGroup>
+
+  <!-- Standard .NET Framework Assembly References -->
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Include="src\Config.cs" />
     <Compile Include="src\Core.cs" />
@@ -33,6 +43,8 @@
     <Compile Include="src\Magnetar.cs" />
     <Compile Include="src\UpdateHandler.cs" />
   </ItemGroup>
+
+  <!-- MelonLoader Dependencies -->
   <ItemGroup Condition="$(Configuration.Contains('Melon'))">
     <Reference Include="0Harmony">
       <HintPath>References\Melonloader\0Harmony.dll</HintPath>
@@ -48,6 +60,12 @@
     </Reference>
     <Reference Include="Il2Cppmscorlib">
       <HintPath>References\Melonloader\Il2Cpp\Il2Cppmscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSystem" Condition="Exists('References\Melonloader\Il2Cpp\Il2CppSystem.dll')">
+      <HintPath>References\Melonloader\Il2Cpp\Il2CppSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSystem.Core" Condition="Exists('References\Melonloader\Il2Cpp\Il2CppSystem.Core.dll')">
+      <HintPath>References\Melonloader\Il2Cpp\Il2CppSystem.Core.dll</HintPath>
     </Reference>
     <Reference Include="MelonLoader">
       <HintPath>References\Melonloader\MelonLoader.dll</HintPath>
@@ -65,6 +83,8 @@
       <HintPath>References\Melonloader\Il2Cpp\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <!-- BepInEx Dependencies -->
   <ItemGroup Condition="$(Configuration.Contains('Bepinex'))">
     <Reference Include="0Harmony">
       <HintPath>References\Bepinex\0Harmony.dll</HintPath>
@@ -87,6 +107,12 @@
     <Reference Include="Il2Cppmscorlib">
       <HintPath>References\Bepinex\Il2Cpp\Il2Cppmscorlib.dll</HintPath>
     </Reference>
+    <Reference Include="Il2CppSystem" Condition="Exists('References\Bepinex\Il2Cpp\Il2CppSystem.dll')">
+      <HintPath>References\Bepinex\Il2Cpp\Il2CppSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSystem.Core" Condition="Exists('References\Bepinex\Il2Cpp\Il2CppSystem.Core.dll')">
+      <HintPath>References\Bepinex\Il2Cpp\Il2CppSystem.Core.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>References\Bepinex\Il2Cpp\UnityEngine.dll</HintPath>
     </Reference>
@@ -100,10 +126,13 @@
       <HintPath>References\Bepinex\Il2Cpp\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <!-- External Addon References -->
   <ItemGroup>
     <Reference Include="Magnetar Client">
       <HintPath>References\Magnetar Client.dll</HintPath>
     </Reference>
   </ItemGroup>
+
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

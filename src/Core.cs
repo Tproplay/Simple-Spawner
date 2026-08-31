@@ -9,7 +9,7 @@ using Il2CppInterop.Runtime.Injection;
 
 
 #if MELONLOADER
-[assembly: MelonInfo(typeof(SimpleSpawner.Core), "Simple Spawner", "3.9", "Tproplay")]
+[assembly: MelonInfo(typeof(SimpleSpawner.Core), "Simple Spawner", "3.9.1", "Tproplay")]
 [assembly: MelonGame("LanPiaoPiao", "PlantsVsZombiesRH")]
 [assembly: MelonOptionalDependencies("Magnetar Client")]
 #endif
@@ -17,7 +17,7 @@ using Il2CppInterop.Runtime.Injection;
 namespace SimpleSpawner
 {
 #if BEPINEX
-    [BepInPlugin("com.tproplay.simplespawner", "Simple Spawner", "3.9")]
+    [BepInPlugin("com.tproplay.simplespawner", "Simple Spawner", "3.9.1")]
     [BepInProcess("PlantsVsZombiesRH.exe")]
     public class Core : BasePlugin
 #elif MELONLOADER

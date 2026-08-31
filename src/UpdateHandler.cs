@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using HarmonyLib;
 
 #if MELONLOADER
@@ -12,6 +13,23 @@ namespace SimpleSpawner
         public static PlantType plantTypeselected = PlantType.Nothing;
         public static ZombieType zombieTypeselected = ZombieType.Nothing;
         public static bool ZombiespawnedByMod = false;
+        private static bool spawnedByBoss = false;
+
+        private struct ZombieData
+        {
+            public ZombieType ZombieType;
+            public int Column;
+            public int Row;
+
+            public ZombieData(ZombieType zombieType, int column, int row)
+            {
+                ZombieType = zombieType;
+                Column = column;
+                Row = row;
+            }
+        }
+
+        private static readonly List<ZombieData> hypnoZombiesData = new List<ZombieData>();
 
 #if BEPINEX
         public static void ApplyPatches()
@@ -25,120 +43,198 @@ namespace SimpleSpawner
         {
             if (!Config.CheckActive() || Board.Instance == null) return;
 
-            bool triggered = false;
-
-            // -- Spawn Zombie with Mind Control ---
-            if (!triggered && Config.CheckKey(Config.keyMindControlModifier.Value, "MindControlModifier") && Config.CheckKeyDown(Config.keySpawnZombie.Value, "SpawnZombie"))
+            // ========================================================
+            // 1. 3-KEY COMBINATIONS
+            // ========================================================
+            if (Config.KeySpawnHypnoZombiePot.IsDown())
             {
-                if (zombieTypeselected != ZombieType.Nothing)
-                {
-                    triggered = true;
-                    CreateZombie.Instance.SetZombieWithMindControl(Mouse.Instance.theMouseRow, zombieTypeselected, Mouse.Instance.mouseX);
-                }
+                SpawnHypnoZombiePot();
+                return;
+            }
+            if (Config.KeySpawnHypnoBoss1Pot.IsDown())
+            {
+                SpawnHypnoBossPot(ZombieType.ZombieBoss);
+                return;
+            }
+            if (Config.KeySpawnHypnoBoss2Pot.IsDown())
+            {
+                SpawnHypnoBossPot(ZombieType.ZombieBoss2);
+                return;
             }
 
-            // -- Spawn Zombie Normal ---
-            if (!triggered && !Config.CheckKey(Config.keyMindControlModifier.Value, "MindControlModifier") && Config.CheckKeyDown(Config.keySpawnZombie.Value, "SpawnZombie"))
+            // ========================================================
+            // 2. 2-KEY POT COMBINATIONS
+            // ========================================================
+            if (Config.KeySpawnPlantPot.IsDown())
+            {
+                SpawnPlantPot();
+                return;
+            }
+            if (Config.KeySpawnZombiePot.IsDown())
+            {
+                SpawnZombiePot();
+                return;
+            }
+            if (Config.KeySpawnBoss1Pot.IsDown())
+            {
+                SpawnBossPot(ZombieType.ZombieBoss);
+                return;
+            }
+            if (Config.KeySpawnBoss2Pot.IsDown())
+            {
+                SpawnBossPot(ZombieType.ZombieBoss2);
+                return;
+            }
+
+            // ========================================================
+            // 3. 2-KEY DELETION COMBINATIONS
+            // ========================================================
+            if (Config.KeyDeleteAllPlants.IsDown())
+            {
+                var allPlants = Object.FindObjectsOfType<Plant>();
+                for (int i = 0; i < allPlants.Length; i++) allPlants[i].Die(Plant.DieReason.BySelf);
+                return;
+            }
+            if (Config.KeyDeleteAllZombies.IsDown())
+            {
+                var allZombies = Object.FindObjectsOfType<Zombie>();
+                for (int i = 0; i < allZombies.Length; i++) allZombies[i].theHealth = 0;
+                return;
+            }
+
+            // ========================================================
+            // 4. 2-KEY HYPNOTIZED & BOSS COMBINATIONS
+            // ========================================================
+            if (Config.KeySpawnHypnoZombie.IsDown())
             {
                 if (zombieTypeselected != ZombieType.Nothing)
                 {
-                    triggered = true;
+                    CreateZombie.Instance.SetZombieWithMindControl(Mouse.Instance.theMouseRow, zombieTypeselected, Mouse.Instance.mouseX);
+                }
+                return;
+            }
+            if (Config.KeySpawnBoss1.IsDown())
+            {
+                ZombiespawnedByMod = true;
+                CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow, ZombieType.ZombieBoss, Mouse.Instance.mouseX);
+                ZombiespawnedByMod = false;
+                return;
+            }
+            if (Config.KeySpawnBoss2.IsDown())
+            {
+                ZombiespawnedByMod = true;
+                CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow, ZombieType.ZombieBoss2, Mouse.Instance.mouseX);
+                ZombiespawnedByMod = false;
+                return;
+            }
+            if (Config.KeySpawnHypnoBoss1.IsDown())
+            {
+                CreateZombie.Instance.SetZombieWithMindControl(Mouse.Instance.theMouseRow, ZombieType.ZombieBoss, Mouse.Instance.mouseX);
+                return;
+            }
+            if (Config.KeySpawnHypnoBoss2.IsDown())
+            {
+                CreateZombie.Instance.SetZombieWithMindControl(Mouse.Instance.theMouseRow, ZombieType.ZombieBoss2, Mouse.Instance.mouseX);
+                return;
+            }
+
+            // ========================================================
+            // 5. PETS (NATIVE MULTI-KEY CHORDS)
+            // ========================================================
+            var mousePos = Mouse.Instance.MousePosition;
+            var board = Board.Instance;
+
+            if (Config.KeyPetGargantuar.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetGargantuar); return; }
+            if (Config.KeyPetFootball.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetFootball); return; }
+            if (Config.KeyPetSnowBoss.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetSnowBoss); return; }
+            if (Config.KeyPetJackbox.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetJackbox); return; }
+            if (Config.KeyPetDrown.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetDrown); return; }
+            if (Config.KeyPetHorse.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetHorse); return; }
+            if (Config.KeyPetImp.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetImp); return; }
+            if (Config.KeyPetKirov.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetKirov); return; }
+
+            // ========================================================
+            // 6. 1-KEY BASE SPAWNS & CONTROLS
+            // ========================================================
+            if (Config.KeySpawnPlant.IsDown())
+            {
+                if (plantTypeselected != PlantType.Nothing)
+                {
+                    CreatePlant.Instance.SetPlant(Mouse.Instance.theMouseColumn, Mouse.Instance.theMouseRow, plantTypeselected);
+                }
+                return;
+            }
+            if (Config.KeySpawnZombie.IsDown())
+            {
+                if (zombieTypeselected != ZombieType.Nothing)
+                {
                     ZombiespawnedByMod = true;
                     CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow, zombieTypeselected, Mouse.Instance.mouseX);
                     ZombiespawnedByMod = false;
                 }
+                return;
             }
-
-            // -- Spawn Bosses (Modifier) ---
-            if (!triggered && Config.CheckKey(Config.keyBossModifier.Value, "BossModifier"))
+            if (Config.KeyToggleTimeScale.IsDown())
             {
-                if (Config.CheckKeyDown(Config.keySpawnBoss1.Value, "SpawnBoss1"))
-                {
-                    triggered = true;
-                    ZombiespawnedByMod = true;
-                    CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow, ZombieType.ZombieBoss, Mouse.Instance.mouseX);
-                    ZombiespawnedByMod = false;
-                }
-                else if (Config.CheckKeyDown(Config.keySpawnBoss2.Value, "SpawnBoss2"))
-                {
-                    triggered = true;
-                    ZombiespawnedByMod = true;
-                    CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow, ZombieType.ZombieBoss2, Mouse.Instance.mouseX);
-                    ZombiespawnedByMod = false;
-                }
+                Time.timeScale = Time.timeScale != 0 ? 0 : 1;
+                return;
             }
 
-            // -- Spawn Bosses (Mind Control) ---
-            if (!triggered && Config.CheckKey(Config.keyMindControlModifier.Value, "MindControlModifier"))
+            // ========================================================
+            // 7. ITEMS
+            // ========================================================
+            if (Config.KeySpawnFertilizer.IsDown()) { SpawnItem("Items/Fertilize/Ferilize"); return; }
+            if (Config.KeySpawnBucket.IsDown()) { SpawnItem("Items/Bucket"); return; }
+            if (Config.KeySpawnHelmet.IsDown()) { SpawnItem("Items/Helmet"); return; }
+            if (Config.KeySpawnJackbox.IsDown()) { SpawnItem("Items/Jackbox"); return; }
+            if (Config.KeySpawnPickaxe.IsDown()) { SpawnItem("Items/Pickaxe"); return; }
+            if (Config.KeySpawnMachine.IsDown()) { SpawnItem("Items/Machine"); return; }
+            if (Config.KeySpawnSuperMachine.IsDown()) { SpawnItem("Items/SuperMachine"); return; }
+            if (Config.KeySpawnPortalHeart.IsDown()) { SpawnItem("Items/PortalHeart"); return; }
+            if (Config.KeySpawnSproutPotPrize.IsDown()) { SpawnItem("Items/SproutPotPrize/SproutPotPrize"); return; }
+        }
+
+        // ==========================================
+        // POT SPAWNING
+        // ==========================================
+        private static void SpawnPlantPot()
+        {
+            if (plantTypeselected != PlantType.Nothing)
             {
-                if (Config.CheckKeyDown(Config.keySpawnBoss1.Value, "SpawnBoss1"))
-                {
-                    triggered = true;
-                    CreateZombie.Instance.SetZombieWithMindControl(Mouse.Instance.theMouseRow, ZombieType.ZombieBoss, Mouse.Instance.mouseX);
-                }
-                else if (Config.CheckKeyDown(Config.keySpawnBoss2.Value, "SpawnBoss2"))
-                {
-                    triggered = true;
-                    CreateZombie.Instance.SetZombieWithMindControl(Mouse.Instance.theMouseRow, ZombieType.ZombieBoss2, Mouse.Instance.mouseX);
-                }
+                ScaryPotManager.CreateScaryPot(plantTypeselected, Mouse.Instance.theMouseColumn, Mouse.Instance.theMouseRow);
             }
+        }
 
-            // -- Spawn Pets ---
-            if (!triggered && Config.CheckKey(Config.keyPetPre.Value, "PetPre", true))
+        private static void SpawnZombiePot()
+        {
+            if (zombieTypeselected != ZombieType.Nothing)
             {
-                if (Config.CheckKeyDown(Config.keyPetGargantuar.Value, "PetGargantuar")) { MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetGargantuar); triggered = true; }
-                else if (Config.CheckKeyDown(Config.keyPetFootball.Value, "PetFootball")) { MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetFootball); triggered = true; }
-                else if (Config.CheckKeyDown(Config.keyPetSnowBoss.Value, "PetSnowBoss")) { MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetSnowBoss); triggered = true; }
-                else if (Config.CheckKeyDown(Config.keyPetJackbox.Value, "PetJackbox")) { MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetJackbox); triggered = true; }
-                else if (Config.CheckKeyDown(Config.keyPetDrown.Value, "PetDrown")) { MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetDrown); triggered = true; }
-                else if (Config.CheckKeyDown(Config.keyPetHorse.Value, "PetHorse")) { MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetHorse); triggered = true; }
-                else if (Config.CheckKeyDown(Config.keyPetImp.Value, "PetImp")) { MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetImp); triggered = true; }
-                else if (Config.CheckKeyDown(Config.keyPetKirov.Value, "PetKirov")) { MiniPet.SetPet(Board.Instance, Mouse.Instance.MousePosition, PetType.PetKirov); triggered = true; }
+                ScaryPotManager.CreateScaryPot(zombieTypeselected, Mouse.Instance.theMouseColumn, Mouse.Instance.theMouseRow);
             }
+        }
 
-            // -- Spawn Items ---
-            if (!triggered && Config.CheckKeyDown(Config.keySpawnFertilizer.Value, "SpawnFertilizer")) { SpawnItem("Items/Fertilize/Ferilize"); triggered = true; }
-            if (!triggered && Config.CheckKeyDown(Config.keySpawnBucket.Value, "SpawnBucket")) { SpawnItem("Items/Bucket"); triggered = true; }
-            if (!triggered && Config.CheckKeyDown(Config.keySpawnHelmet.Value, "SpawnHelmet")) { SpawnItem("Items/Helmet"); triggered = true; }
-            if (!triggered && Config.CheckKeyDown(Config.keySpawnJackbox.Value, "SpawnJackbox")) { SpawnItem("Items/Jackbox"); triggered = true; }
-            if (!triggered && Config.CheckKeyDown(Config.keySpawnPickaxe.Value, "SpawnPickaxe")) { SpawnItem("Items/Pickaxe"); triggered = true; }
-            if (!triggered && Config.CheckKeyDown(Config.keySpawnMachine.Value, "SpawnMachine")) SpawnItem("Items/Machine"); // Keep unassigned if intended or add triggered = true;
-            if (!triggered && Config.CheckKeyDown(Config.keySpawnSuperMachine.Value, "SpawnSuperMachine")) { SpawnItem("Items/SuperMachine"); triggered = true; }
-            if (!triggered && Config.CheckKeyDown(Config.keySpawnPortalHeart.Value, "SpawnPortalHeart")) { SpawnItem("Items/PortalHeart"); triggered = true; }
-            if (!triggered && Config.CheckKeyDown(Config.keySpawnSproutPotPrize.Value, "SpawnSproutPotPrize")) { SpawnItem("Items/SproutPotPrize/SproutPotPrize"); triggered = true; }
-
-            // -- Delete all plants ---
-            if (!triggered && Config.CheckKeyDown(Config.keyDeleteAllPlants.Value, "DeleteAllPlants"))
+        private static void SpawnHypnoZombiePot()
+        {
+            if (zombieTypeselected != ZombieType.Nothing)
             {
-                triggered = true;
-                var allPlants = UnityEngine.Object.FindObjectsOfType<Plant>();
-                foreach (var plant in allPlants) plant.Die(Plant.DieReason.BySelf);
+                int col = Mouse.Instance.theMouseColumn;
+                int row = Mouse.Instance.theMouseRow;
+                ScaryPotManager.CreateScaryPot(zombieTypeselected, col, row);
+                hypnoZombiesData.Add(new ZombieData(zombieTypeselected, col, row));
             }
+        }
 
-            // -- Delete all zombies ---
-            if (!triggered && Config.CheckKeyDown(Config.keyDeleteAllZombies.Value, "DeleteAllZombies"))
-            {
-                triggered = true;
-                var allZombies = UnityEngine.Object.FindObjectsOfType<Zombie>();
-                foreach (var zombie in allZombies) zombie.theHealth = 0;
-            }
+        private static void SpawnBossPot(ZombieType bossType)
+        {
+            ScaryPotManager.CreateScaryPot(bossType, Mouse.Instance.theMouseColumn, Mouse.Instance.theMouseRow);
+        }
 
-            // -- Toggle Time Scale ---
-            if (!triggered && Config.CheckKeyDown(Config.keyToggleTimeScale.Value, "ToggleTimeScale"))
-            {
-                triggered = true;
-                UnityEngine.Time.timeScale = UnityEngine.Time.timeScale != 0 ? 0 : 1;
-            }
-
-            // -- Spawn Plant ---
-            if (!triggered && Config.CheckKeyDown(Config.keySpawnPlant.Value, "SpawnPlant"))
-            {
-                if (plantTypeselected != PlantType.Nothing)
-                {
-                    triggered = true;
-                    CreatePlant.Instance.SetPlant(Mouse.Instance.theMouseColumn, Mouse.Instance.theMouseRow, plantTypeselected);
-                }
-            }
+        private static void SpawnHypnoBossPot(ZombieType bossType)
+        {
+            int col = Mouse.Instance.theMouseColumn;
+            int row = Mouse.Instance.theMouseRow;
+            ScaryPotManager.CreateScaryPot(bossType, col, row);
+            hypnoZombiesData.Add(new ZombieData(bossType, col, row));
         }
 
         public static void SpawnItem(string resourcePath)
@@ -146,24 +242,33 @@ namespace SimpleSpawner
             GameObject prefab = Resources.Load<GameObject>(resourcePath);
             if (prefab != null)
             {
-                GameObject item = UnityEngine.Object.Instantiate(prefab);
+                GameObject item = Object.Instantiate(prefab);
                 item.transform.position = new Vector3(Mouse.Instance.mouseX, Mouse.Instance.mouseY, 0);
                 item.transform.SetParent(GameAPP.board.transform);
             }
             else if (Core.MagnetarLoaded)
             {
-                Magnetar_Client.Utils.Magnetar_Logger.DebugLogger.Msg($"[Simple Spawner] No prefab at path: {resourcePath}"); 
+                Magnetar_Client.Utils.Magnetar_Logger.DebugLogger.Msg($"[Simple Spawner] No prefab at path: {resourcePath}");
             }
         }
 
-        // --- Harmony Patches ---
+        // ==========================================
+        // HARMONY PATCHES
+        // ==========================================
         [HarmonyPatch(typeof(AlmanacPlantMenu), nameof(AlmanacPlantMenu.SelectCard))]
         public static class AlmanacPlantMenu_SelectCard_Patch
         {
             [HarmonyPrefix]
             public static void Prefix(AlmanacCardUI card)
             {
-                if (card != null) plantTypeselected = card.PlantType;
+                if (card != null)
+                {
+                    plantTypeselected = card.PlantType;
+                    if (Core.MagnetarLoaded)
+                    {
+                        MagnetarIntegration.SyncPlantSelection(card.PlantType);
+                    }
+                }
             }
         }
 
@@ -173,7 +278,14 @@ namespace SimpleSpawner
             [HarmonyPrefix]
             public static void Prefix(AlmanacCardUI card)
             {
-                if (card != null) zombieTypeselected = card.ZombieType;
+                if (card != null)
+                {
+                    zombieTypeselected = card.ZombieType;
+                    if (Core.MagnetarLoaded)
+                    {
+                        MagnetarIntegration.SyncZombieSelection(card.ZombieType);
+                    }
+                }
             }
         }
 
@@ -184,16 +296,34 @@ namespace SimpleSpawner
             public static bool Prefix(int theRow, ZombieType theZombieType, float theX)
             {
                 if (ZombiespawnedByMod) return true;
-                var zombies = UnityEngine.Object.FindObjectsOfType<Zombie>();
-                foreach (var zombie in zombies)
+
+                int col = Lawnf.GetColumnFromX(theX);
+
+                for (int i = hypnoZombiesData.Count - 1; i >= 0; i--)
                 {
-                    if (((zombie.theZombieType == ZombieType.ZombieBoss && zombie.isMindControlled) ||
-                        (zombie.theZombieType == ZombieType.ZombieBoss2 && zombie.isMindControlled)) && theX < 5)
+                    var data = hypnoZombiesData[i];
+                    if (data.ZombieType == theZombieType && data.Row == theRow && data.Column == col)
                     {
+                        hypnoZombiesData.RemoveAt(i);
                         CreateZombie.Instance.SetZombieWithMindControl(theRow, theZombieType, theX);
                         return false;
                     }
                 }
+
+                if (spawnedByBoss && theX < 5f)
+                {
+                    var zombies = Object.FindObjectsOfType<Zombie>();
+                    for (int i = 0; i < zombies.Length; i++)
+                    {
+                        var z = zombies[i];
+                        if ((z.theZombieType == ZombieType.ZombieBoss || z.theZombieType == ZombieType.ZombieBoss2) && z.isMindControlled)
+                        {
+                            CreateZombie.Instance.SetZombieWithMindControl(theRow, theZombieType, theX);
+                            return false;
+                        }
+                    }
+                }
+
                 return true;
             }
         }
@@ -203,17 +333,19 @@ namespace SimpleSpawner
         {
             [HarmonyPatch(nameof(ZombieBoss.AnimPutBall))]
             [HarmonyPrefix]
-            public static bool Prefix_AnimBall(ZombieBoss __instance)
-            {
-                return !__instance.isMindControlled;
-            }
+            public static bool Prefix_AnimBall(ZombieBoss __instance) => !__instance.isMindControlled;
 
             [HarmonyPatch(nameof(ZombieBoss.AnimBungi))]
             [HarmonyPrefix]
-            public static bool Prefix_AnimBungi(ZombieBoss __instance)
-            {
-                return !__instance.isMindControlled;
-            }
+            public static bool Prefix_AnimBungi(ZombieBoss __instance) => !__instance.isMindControlled;
+
+            [HarmonyPatch(nameof(ZombieBoss.AnimSpawn))]
+            [HarmonyPrefix]
+            public static void Prefix_AnimSpawn() => spawnedByBoss = true;
+
+            [HarmonyPatch(nameof(ZombieBoss.AnimSpawn))]
+            [HarmonyPostfix]
+            public static void Postfix_AnimSpawn() => spawnedByBoss = false;
         }
     }
 }
