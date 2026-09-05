@@ -1,12 +1,13 @@
-﻿#if MELONLOADER
+﻿using System;
+using System.Reflection;
+
+#if MELONLOADER
 using MelonLoader;
 #elif BEPINEX
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using Il2CppInterop.Runtime.Injection;
 #endif
-
-
 
 #if MELONLOADER
 [assembly: MelonInfo(typeof(SimpleSpawner.Core), "Simple Spawner", "3.9.1", "Tproplay")]
@@ -19,6 +20,7 @@ namespace SimpleSpawner
 #if BEPINEX
     [BepInPlugin("com.tproplay.simplespawner", "Simple Spawner", "3.9.1")]
     [BepInProcess("PlantsVsZombiesRH.exe")]
+    [BepInDependency("Magnetar_Client", BepInDependency.DependencyFlags.SoftDependency)]
     public class Core : BasePlugin
 #elif MELONLOADER
     public class Core : MelonMod
@@ -26,6 +28,21 @@ namespace SimpleSpawner
     {
         public static Core Instance;
         public static bool MagnetarLoaded = false;
+
+        static Core()
+        {
+            // Intercept assembly resolution to prevent TypeLoadException crashes in UniverseLib / HarmonyX
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                var asmName = new AssemblyName(args.Name).Name;
+                if (asmName == "Magnetar Client" || asmName == "Magnetar_Client")
+                {
+                    // Return null gracefully without bubbling fatal load exceptions
+                    return null;
+                }
+                return null;
+            };
+        }
 
 #if MELONLOADER
         public override void OnInitializeMelon()

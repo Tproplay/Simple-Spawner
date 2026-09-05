@@ -246,9 +246,17 @@ namespace SimpleSpawner
                 item.transform.position = new Vector3(Mouse.Instance.mouseX, Mouse.Instance.mouseY, 0);
                 item.transform.SetParent(GameAPP.board.transform);
             }
-            else if (Core.MagnetarLoaded)
+            else
             {
-                Magnetar_Client.Utils.Magnetar_Logger.DebugLogger.Msg($"[Simple Spawner] No prefab at path: {resourcePath}");
+                if (Core.MagnetarLoaded)
+                {
+                    // Safely routed through the isolated method so the JIT doesn't eagerly resolve the DLL
+                    MagnetarIntegration.LogDebug($"[Simple Spawner] No prefab at path: {resourcePath}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[Simple Spawner] No prefab at path: {resourcePath}");
+                }
             }
         }
 
