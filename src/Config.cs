@@ -10,6 +10,14 @@ using BepInEx.Configuration;
 
 namespace SimpleSpawner
 {
+
+    public static class AssemblyInfo
+    {
+        public const string Version = "4.0.0";
+        public const string Name = "Simple Spawner";
+        public const string Author = "Tproplay";
+    }
+
     public class KeyBind
     {
         public string Id { get; }
