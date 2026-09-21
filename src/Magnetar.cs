@@ -217,14 +217,8 @@ namespace SimpleSpawner
             {
                 MaxSelection = 1,
                 CustomNames = Magnetar_Client.Modules.Module.TranslatedNames(typeof(PlantType)),
-                Blacklist = new HashSet<int>
-        {
-            (int)PlantType.Nothing,
-            257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268,
-            246, 247, 3000
-        }
+                Blacklist = Magnetar_Client.Modules.Module.Banned.PlantTypeBanned
             };
-            PlantSelectedSetting.Blacklist.Add((int)PlantType.Nothing);
             PlantSelectedSetting.OnSelectionChanged = (id, selected) =>
             {
                 if (isSyncing) return;
@@ -247,12 +241,8 @@ namespace SimpleSpawner
             {
                 MaxSelection = 1,
                 CustomNames = Magnetar_Client.Modules.Module.TranslatedNames(typeof(ZombieType)),
-                Blacklist = new HashSet<int>
-        {
-            (int)ZombieType.Nothing
-        }
+                Blacklist = Magnetar_Client.Modules.Module.Banned.ZombieTypeBanned
             };
-            ZombieSelectedSetting.Blacklist.Add((int)ZombieType.Nothing);
             ZombieSelectedSetting.OnSelectionChanged = (id, selected) =>
             {
                 if (isSyncing) return;
