@@ -123,7 +123,6 @@ namespace SimpleSpawner
         public static readonly KeyBind KeySpawnSuperMachine = Register("SpawnSuperMachine", "Spawn Super Machine", "Items", KeyCode.Keypad7);
         public static readonly KeyBind KeySpawnPortalHeart = Register("SpawnPortalHeart", "Spawn Portal Heart", "Items", KeyCode.Keypad8);
         public static readonly KeyBind KeySpawnSproutPotPrize = Register("SpawnSproutPotPrize", "Spawn Sprout Pot Prize", "Items", KeyCode.Keypad9);
-        public static readonly KeyBind KeySpawnZombieFertilizer = Register("SpawnZombieFertilizer", "Spawn Zombie Fertilizer", "Items", KeyCode.None);
 
         private static KeyBind Register(string id, string displayName, string category, params KeyCode[] defaultKeys)
         {
