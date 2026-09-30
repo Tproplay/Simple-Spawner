@@ -6,6 +6,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using Magnetar_Client.Modules;
+using Magnetar_Client.UI.Setting;
 
 #if MELONLOADER
 using Il2Cpp;
@@ -38,7 +39,7 @@ namespace SimpleSpawner
             {
                 Type dynamicModuleType = CreateDynamicModuleType();
                 Magnetar_Client.Core.ModuleManager.showAddonCategory = true;
-                Magnetar_Client.Core.ModuleManager.RegisterModule(dynamicModuleType);
+                Magnetar_Client.Api.Api.RegisterModule(dynamicModuleType);
             }
             catch (Exception ex)
             {

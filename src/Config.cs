@@ -13,7 +13,7 @@ namespace SimpleSpawner
 
     public static class AssemblyInfo
     {
-        public const string Version = "4.0.0";
+        public const string Version = "4.0.1";
         public const string Name = "Simple Spawner";
         public const string Author = "Tproplay";
     }
