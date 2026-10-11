@@ -248,10 +248,10 @@ namespace SimpleSpawner
             }
             else
             {
-                if (Core.MagnetarLoaded)
+                if (MagnetarIntegration.IsMagnetarLoaded)
                 {
                     // Safely routed through the isolated method so the JIT doesn't eagerly resolve the DLL
-                    MagnetarIntegration.LogDebug($"[Simple Spawner] No prefab at path: {resourcePath}");
+                    MagnetarIntegration.LogWarning($"[Simple Spawner] No prefab at path: {resourcePath}");
                 }
                 else
                 {
@@ -272,7 +272,7 @@ namespace SimpleSpawner
                 if (card != null)
                 {
                     plantTypeselected = card.PlantType;
-                    if (Core.MagnetarLoaded)
+                    if (MagnetarIntegration.IsMagnetarLoaded)
                     {
                         MagnetarIntegration.SyncPlantSelection(card.PlantType);
                     }
@@ -289,7 +289,7 @@ namespace SimpleSpawner
                 if (card != null)
                 {
                     zombieTypeselected = card.ZombieType;
-                    if (Core.MagnetarLoaded)
+                    if (MagnetarIntegration.IsMagnetarLoaded)
                     {
                         MagnetarIntegration.SyncZombieSelection(card.ZombieType);
                     }

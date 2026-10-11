@@ -28,22 +28,7 @@ namespace SimpleSpawner
 #endif
     {
         public static Core Instance;
-        public static bool MagnetarLoaded = false;
 
-        static Core()
-        {
-            // Intercept assembly resolution to prevent TypeLoadException crashes in UniverseLib / HarmonyX
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
-            {
-                var asmName = new AssemblyName(args.Name).Name;
-                if (asmName == "Magnetar Client" || asmName == "Magnetar_Client")
-                {
-                    // Return null gracefully without bubbling fatal load exceptions
-                    return null;
-                }
-                return null;
-            };
-        }
 
 #if MELONLOADER
         public override void OnInitializeMelon()
@@ -51,19 +36,12 @@ namespace SimpleSpawner
             Instance = this;
             Config.Initialize();
 
-            MagnetarLoaded = MagnetarIntegration.IsMagnetarLoaded();
-            if (MagnetarLoaded)
-            {
-                MagnetarIntegration.Init();
-            }
+            MagnetarIntegration.Init();
         }
 
         public override void OnApplicationQuit()
         {
-            if (MagnetarLoaded)
-            {
-                MagnetarIntegration.SyncIfDirty();
-            }
+            MagnetarIntegration.SyncIfDirty();
         }
 
         public override void OnUpdate()
@@ -81,7 +59,7 @@ namespace SimpleSpawner
             ClassInjector.RegisterTypeInIl2Cpp<CoreUpdater>();
             AddComponent<CoreUpdater>();
 
-            MagnetarLoaded = MagnetarIntegration.IsMagnetarLoaded();
+            MagnetarLoaded = MagnetarIntegration.IsMagnetarLoaded;
             if (MagnetarLoaded)
             {
                 MagnetarIntegration.Init();

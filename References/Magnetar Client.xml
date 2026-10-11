@@ -1,0 +1,614 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Magnetar Client</name>
+    </assembly>
+    <members>
+        <member name="T:Magnetar_Client.Api.ServicePriority">
+            <summary>
+            Common priorities for deterministic execution order. Lower numbers execute earlier.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.IClientService">
+            <summary>
+            Base metadata interface for any client service.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:Magnetar_Client.Api.IClientService.Name" -->
+        <member name="P:Magnetar_Client.Api.IClientService.Priority">
+            <summary>
+            Execution priority. Lower runs first.
+            Refer to <see cref="T:Magnetar_Client.Api.ServicePriority"/> for standard tier offsets.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.IInitializable">
+            <summary>
+            Services that require initialization during startup.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.IWarmUp">
+            <summary>
+            Services that need to warm up fonts, textures, or styles at first frame rendering.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.IUpdatable">
+            <summary>
+            Services that run logic on Unity's Update loop.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.IRenderable">
+            <summary>
+            Services that require rendering every OnGUI regardless of menu state.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.IMenuRenderable">
+            <summary>
+            Services that render within the transformed matrix GUI window when ClientConfig.showgui is true.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Api.IMenuRenderable.OnMenuGUI">
+            <summary>
+            Renders menu components when the client window is open.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.ICloseHandler">
+            <summary>
+            Services that need to intercept, guard, or handle Escape key presses and navigation state.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Api.ICloseHandler.CanClose">
+            <summary>
+            Return true to permits closing the whole GUI.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Api.ICloseHandler.OnEscapePressed">
+            <summary>
+            Attempts to consume an Escape press.
+            Return true if the event was consumed so the main GUI stays open.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.ILanguageAware">
+            <summary>
+            Services that respond to language changes.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.IPersistent">
+            <summary>
+            Services that persist data to disk during regular saves or profile switches.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.IQuittable">
+            <summary>
+            Services that perform cleanup when the game shuts down.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.IThemeAware">
+            <summary>
+            Services that respond to theme changes.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Magnetar_Client.Api.IScaleAware" -->
+        <member name="M:Magnetar_Client.Api.IMagnetarAddon.OnLoad">
+            <summary>
+            Runs after all addon assemblies are loaded.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Api.ISaveHandler.SectionKey">
+            <summary>
+            Unique key name used as the section identifier in the profile JSON.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Api.ISaveHandler.ExportData">
+            <summary>
+            Returns the data object to serialize into the save file.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Api.ISaveHandler.ImportData(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Imports and restores data from the profile JSON.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Api.ISaveHandler.ResetToDefault">
+            <summary>
+            Resets all state managed by this handler to factory defaults.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Api.PathsManager">
+            <summary>
+            Contains consistent paths for all mod loaders
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Api.PathsManager.ModsDir">
+            <summary>
+            Melonloader:
+            Game Folder / Mods
+            </summary>
+            <remarks>
+            BepInEx:
+            Game Folder / BepInEx / plugins
+            </remarks>
+        </member>
+        <member name="P:Magnetar_Client.Api.PathsManager.DataDir">
+            <summary>
+            Melonloader:
+            Game Folder / Mods / Magnetar Data
+            </summary>
+            <remarks>
+            BepInEx:
+            Game Folder / BepInEx / plugins / Magnetar Data
+            </remarks>
+        </member>
+        <member name="P:Magnetar_Client.Api.PathsManager.ConfigDir">
+            <summary>
+            Melonloader:
+            Game Folder / UserData
+            </summary>
+            <remarks>
+            BepInEx:
+            Game Folder / BepInEx / config
+            </remarks>
+        </member>
+        <member name="P:Magnetar_Client.Api.PathsManager.ProfilesDir">
+            <summary>
+            Melonloader:
+            Game Folder / UserData / Magnetar Profiles
+            </summary>
+            <remarks>
+            BepInEx:
+            Game Folder / BepInEx / config / Magnetar Profiles
+            </remarks>
+        </member>
+        <member name="M:Magnetar_Client.Api.PathsManager.GetProfilePath(System.String)">
+            <summary>
+            Gets the path to the save file of the profile.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Api.PathsManager.AddonsDir">
+            <summary>
+            Melonloader:
+            Game Folder / Mods / Magnetar Data / Addons
+            </summary>
+            <remarks>
+            BepInEx:
+            Game Folder / BepInEx / plugins / Magnetar Data / Addons
+            </remarks>
+        </member>
+        <member name="P:Magnetar_Client.Api.PathsManager.TranslationRootDir">
+            <summary>
+            Melonloader:
+            Game Folder / Mods / Magnetar Data / Magnetar Translation
+            </summary>
+            <remarks>
+            BepInEx:
+            Game Folder / BepInEx / plugins / Magnetar Data / Magnetar Translation
+            </remarks>
+        </member>
+        <member name="P:Magnetar_Client.Api.PathsManager.ResouceDataDir">
+            <summary>
+            Melonloader:
+            Game Folder / Mods / Magnetar Data / Resources
+            </summary>
+            <remarks>
+            BepInEx:
+            Game Folder / BepInEx / plugins / Magnetar Data / Resources
+            </remarks>
+        </member>
+        <member name="P:Magnetar_Client.Api.PathsManager.TextureDataPath">
+            <summary>
+            Melonloader:
+            Game Folder / Mods / Magnetar Data / TextureData.json
+            </summary>
+            <remarks>
+            BepInEx:
+            Game Folder / BepInEx / plugins / Magnetar Data / TextureData.json
+            </remarks>
+        </member>
+        <member name="P:Magnetar_Client.Api.PathsManager.ThemesDir">
+            <summary>
+            Melonloader:
+            Game Folder / Mods / Magnetar Data / Themes
+            </summary>
+            <remarks>
+            BepInEx:
+            Game Folder / BepInEx / plugins / Magnetar Data / Themes
+            </remarks>
+        </member>
+        <member name="P:Magnetar_Client.Api.PathsManager.MagnetarUIABPath">
+            <summary>
+            Melonloader:
+            Game Folder / Mods / Magnetar Data / Resources / magnetar_ui
+            </summary>
+            <remarks>
+            BepInEx:
+            Game Folder / BepInEx / plugins / Magnetar Data / Resources / magnetar_ui
+            </remarks>
+        </member>
+        <member name="P:Magnetar_Client.Api.PathsManager.FXDataPath">
+            <summary>
+            Melonloader:
+            Game Folder / Mods / Magnetar Data / FxData.json
+            </summary>
+            <remarks>
+            BepInEx:
+            Game Folder / BepInEx / plugins / Magnetar Data / FxData.json
+            </remarks>
+        </member>
+        <member name="M:Magnetar_Client.Api.ServiceRegistry.Register(Magnetar_Client.Api.IClientService)">
+            <summary>
+            Registers a client service.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Api.ServiceRegistry.Unregister(Magnetar_Client.Api.IClientService)">
+            <summary>
+            Unregisters an active service.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.ClientConfig.RescaleAroundCenter(UnityEngine.Rect@,System.Single,System.Single)">
+            <summary>
+            Resizes a Rect to the given width/height while keeping its current
+            center point fixed. Used for draggable windows so they grow/shrink
+            around wherever the user last dragged them when GUIScale changes,
+            instead of always resetting to a default position.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Core.AddonManager.InitAddons">
+            <summary>
+            Scans the 'Mods/Magnetar Addon' directory, loads all assemblies into memory,
+            and instantiates and initializes all IMagnetarAddon implementations first.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Core.AddonManager.InitModules">
+            <summary>
+            Discovers and registers all Module subclasses from the previously loaded addon assemblies.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Core.AddonManager.InitHUDElements">
+            <summary>
+            Discovers and registers all HudElement subclasses from the loaded addon assemblies.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Core.AddonManager.InitServices">
+            <summary>
+            Discovers and registers all IClientService implementations from addon assemblies into the ServiceRegistry.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Core.HUDManager_.HUDSelectorDrawer.ActiveSetting">
+            <summary>
+            Explicitly bound to HudToggles so external multi-select cleans never wipe it to null.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Core.TabType.Register(System.String,System.Action,System.Action,System.Action)">
+            <summary>
+            Registers a new custom tab.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.PreferenceManager.CreateEntry``1(System.String,System.String,``0,System.String,System.String)">
+            <summary>
+            API to create new preference entries at runtime.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Game.AppData">
+            <summary>
+            Contains Useful App Stats, mainly used for code optimization
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Game.AppData.InMainMenu">
+            <summary>
+            Checks if the player is on the MainMenu
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Game.AppData.InAlmanac">
+            <summary>
+            Checks if the player is checking the Almanac
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Game.GameData">
+            <summary>
+            Contains useful Game Stats like the plants place, zombies in the lawn, etc.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Game.GameData.PlantList">
+            <summary>
+            Sorted List of the current active plants on the BoardInstance.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Game.GameData.ZombieList">
+            <summary>
+            Sorted List of the current active (non-idle) zombies on the BoardInstance.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Game.GameData.GetLevelName">
+            <summary>
+            Get the Name of the level being played.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.GodsEvolvedHack.ApplyToGame(Il2CppGameLevel.RogueShooting.ShootingManager)">
+            <summary>
+            Pushes GUI values into the game.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.GodsEvolvedHack.SyncFromGame(Il2CppGameLevel.RogueShooting.ShootingManager)">
+            <summary>
+            Reads game values into the GUI sliders.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Modules.Module.Name">
+            <summary>
+            Name to be displayed
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Modules.Module.SearchHints">
+            <summary>
+            Search hints to be used when searching for the module
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Modules.Module.Author">
+            <summary>
+            Optional name for mod author. Supports rich text.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Modules.Module.Description">
+            <summary>
+            Description for the module. Supports rich text.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Modules.Module.Category">
+            <summary>
+            The category to put the module in.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Modules.Module.ShowSettings">
+            <summary>
+            Used to determine whether the setting window of the module is opened.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.Modules.Module.Settings">
+            <summary>
+            Used to store all the settings for the module.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.Module.OnEnable">
+            <summary>
+            Runs once when the module is enabled. Runs Before OnUpdateActive.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.Module.OnDisable">
+            <summary>
+            Runs once when the module is disabled. Runs After OnUpdateActive.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.Module.OnUpdate">
+            <summary>
+            Runs every frame regardless of whether the module is active or not.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.Module.OnUpdateActive">
+            <summary>
+            Runs every frame only when the module is active. Will not run if OnUpdate is overridden without calling base.OnUpdate().
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.Module.OnGUI">
+            <summary>
+            Runs every frame on UnityEngine.OnGUI
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.Module.AddSettings(Magnetar_Client.UI.Setting.Setting[])">
+            <summary>
+            Static method to add settings to the module. Call this in the constructor of your module with all the settings you want to add.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.Module.OnLanguageChanged">
+            <summary>
+            Runs when the mod's language is changed.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.Module.TranslateEnum(System.Type,System.Boolean)">
+            <summary>
+            Translates an enum using the central Translator.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.Module.CreateCategory(System.String,System.Boolean)">
+            <summary>
+            Creates a new Category. Use EndCategory() to define the end.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Modules.Module.Banned">
+            <summary>
+            Contains default Banned HashSets for Plants and Zombies
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Modules.Module.SavedData">
+            <summary>
+            Arbitrary key-value store for module state (floats, ints, bools, strings, objects).
+            Serialized into the profile save file by ModuleManager and restored on profile load.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Modules.Module.SavedTranslationData">
+            <summary>
+            Key-value pairs for module-specific phrases. Loaded from the module's 
+            translation JSON and overwritten with translated values when a language loads.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.Modules.Module.SavedRegexTranslations">
+            <summary>
+            Custom regex replacement rules (RegexPattern -> ReplacementTemplate).
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.Module.Translate(System.String)">
+            <summary>
+            Translates an input string checking module-specific translations and regexes first,
+            then falling back to the global Translator.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.ModuleCategory.Init">
+            <summary>
+            Explicitly initializes and registers the built-in categories so they exist
+            and occupy layout slots before any module accesses or assigns them.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.ModuleCategory.Register(System.String,System.Int32)">
+            <summary>
+            Registers a new category or returns an existing one if already registered.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.FasterPlants.TryGetPlantMultipliers(System.Int32,System.Single@,System.Single@,System.Single@)">
+            <summary>
+            Priority: Highest-index Section > Lowest-index Section > Global General Settings.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.AnimationHandler.GetViewAlpha(System.String,System.String,System.Boolean)">
+            <summary>
+            Gets the current alpha for a specific view inside a group.
+            If no views in the group are active, defaults the first registered view to 1.0f.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.AnimationHandler.SwitchView(System.String,System.String,System.Nullable{System.Single})">
+            <summary>
+            Switches the active view strictly within its own group, leaving all other groups/tabs untouched.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.AnimationHandler.SetViewImmediate(System.String,System.String,System.Single)">
+            <summary>
+            Set or register a new alpha animation key 
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.AnimationHandler.SnapToVisible">
+            <summary>
+            Instantly complete the current fade transition
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.AnimationHandler.FadeView(System.String,System.String,System.Single,System.Nullable{System.Single})">
+            <summary>
+            Smoothly transitions a specific view inside a group toward a target alpha (0.0 to 1.0).
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.AnimationHandler.RenderWithTabAlpha(Magnetar_Client.Core.TabType,System.Action,System.Single)">
+            <summary>
+            Executes a render action with blended tab alpha if the tab view is active or transitioning.
+            Automatically handles GUI.color preservation and restoration.
+            </summary>
+            <param name="tab">The target tab to check.</param>
+            <param name="renderAction">The render delegate to execute.</param>
+            <param name="threshold">Minimum visible alpha threshold.</param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:Magnetar_Client.UI.GUIHelper.ColorTagRegex" -->
+        <member name="P:Magnetar_Client.UI.GUIHelper.RainbowColor">
+            <summary>
+            Get a Color which automatically changes color in a rainbow pattern
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.SafeToCloseManager.RegisterGuard(System.Func{System.Boolean})">
+            <summary>
+            Registers a condition guard. If the callback returns false, the GUI will not close on Escape.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.SafeToCloseManager.UnregisterGuard(System.Func{System.Boolean})">
+            <summary>
+            Unregisters an active close guard.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.SafeToCloseManager.RegisterInterceptor(System.Func{System.Boolean})">
+            <summary>
+            Registers an Escape interceptor callback (e.g. dismissing an addon modal window).
+            Returning true consumes the keypress so the parent GUI remains open.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.SafeToCloseManager.UnregisterInterceptor(System.Func{System.Boolean})">
+            <summary>
+            Unregisters an Escape interceptor.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.SafeToCloseManager.CanClose">
+            <summary>
+            Evaluates all delegates and ICloseHandler services.
+            Returns true only if every handler and guard allows closing.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.SafeToCloseManager.TryInterceptEscape">
+            <summary>
+            Dispatches Escape event to delegates and ICloseHandler services in reverse order (LIFO).
+            Returns true if any handler intercepted the keypress.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.SectionInstance.Find(System.String)">
+            <summary>
+            Finds the first setting in ChildSettings by its name
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.SectionInstance.Find(System.String,Magnetar_Client.UI.Setting.Setting@)">
+            <summary>
+            Finds the first setting in ChildSettings by its name
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.SectionInstance.Find``1(System.String)">
+            <summary>
+            Finds the first setting in ChildSettings by its name
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.SectionInstance.Find``1(System.String,``0@)">
+            <summary>
+            Finds the first setting in ChildSettings by its name
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.SelectAll(System.Boolean)">
+            <summary>
+            Selects all valid options (excluding blacklists) and optionally caches them as the default state.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.SetCurrentAsDefault">
+            <summary>
+            Saves the current selection state into DefaultSelectedValues for reset operations.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.WindowDrawing.MiscDrawing.SeperatorFull(System.Single@,System.Single,System.Single)">
+            <summary>
+            Draws a scalable horizontal separator spanning the full window width.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.WindowDrawing.MiscDrawing.Seperator(System.Single@,System.Single,System.Single,System.Single,System.String,System.Boolean,System.Boolean,System.Nullable{UnityEngine.Color})">
+            <summary>
+            Draws a scalable separator with indent margins. Optionally draws a labeled, clickable category foldout.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.WindowDrawing.MiscDrawing.DrawOrthogonalLine(UnityEngine.Vector2,UnityEngine.Vector2,System.Single)">
+            <summary>
+            Draws an orthogonal link line between two points, scaling by both Canvas Zoom and GUIScale.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.Utils.CustomLogger">
+            <summary>
+            A custom logger to support logs of both mod loaders
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Utils.HarmonyManager.HarmonyPatchAll(System.Reflection.Assembly,HarmonyLib.Harmony)">
+            <summary>
+            Applies all Harmony patches from the specified assembly and returns diagnostic patch info with recorded exceptions.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Utils.SaveLoad.RegisterHandler(Magnetar_Client.Api.ISaveHandler)">
+            <summary>
+            Registers a custom save section handler. Use this in your managers and addons.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Utils.SaveLoad.UnregisterHandler(System.String)">
+            <summary>
+            Removes a previously registered save handler.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Utils.SaveLoad.RegisterEntry``1(System.String,System.Func{``0},System.Action{``0},``0)">
+            <summary>
+            Quick helper to register a single property or configuration value as a save entry.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Utils.SaveLoad.ResetAll">
+            <summary>
+            Tells all registered handlers to reset their state to default.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.Utils.SaveLoadData.SaveRegistry.Register``1(System.String,System.Func{``0},System.Action{``0},``0)">
+            <summary>
+            Registers a new save entry. Can be called anywhere (e.g. extensions, plugins, managers).
+            </summary>
+        </member>
+    </members>
+</doc>

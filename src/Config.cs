@@ -38,9 +38,9 @@ namespace SimpleSpawner
             DisplayName = displayName;
             Category = category;
             DefaultKeys = defaultKeys != null && defaultKeys.Length > 0
-                ? new List<KeyCode>(defaultKeys)
-                : new List<KeyCode> { KeyCode.None };
-            Keys = new List<KeyCode>(DefaultKeys);
+                ? [.. defaultKeys]
+                : [KeyCode.None];
+            Keys = [.. DefaultKeys];
         }
 
         public void SetKeys(IEnumerable<KeyCode> newKeys)
@@ -152,13 +152,13 @@ namespace SimpleSpawner
 
         public static bool CheckKeyDown(List<KeyCode> keys, string bindId, bool trueIfNone = false)
         {
-            if (Core.MagnetarLoaded) return MagnetarIntegration.GetKeyDown(bindId, trueIfNone);
+            if (MagnetarIntegration.IsMagnetarLoaded) return MagnetarIntegration.GetKeyDown(bindId, trueIfNone);
             return CheckChordDown(keys, trueIfNone);
         }
 
         public static bool CheckKey(List<KeyCode> keys, string bindId, bool trueIfNone = false)
         {
-            if (Core.MagnetarLoaded) return MagnetarIntegration.GetKey(bindId, trueIfNone);
+            if (MagnetarIntegration.IsMagnetarLoaded) return MagnetarIntegration.GetKey(bindId, trueIfNone);
             return CheckChordHeld(keys, trueIfNone);
         }
 
@@ -216,7 +216,7 @@ namespace SimpleSpawner
 
         public static bool CheckActive()
         {
-            if (Core.MagnetarLoaded) return MagnetarIntegration.Active();
+            if (MagnetarIntegration.IsMagnetarLoaded) return MagnetarIntegration.Active();
             return true;
         }
 

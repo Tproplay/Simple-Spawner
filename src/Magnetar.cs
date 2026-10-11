@@ -1,300 +1,166 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using Magnetar_Client.Modules;
-using Magnetar_Client.UI.Setting;
+using MelonLoader;
+
 
 #if MELONLOADER
 using Il2Cpp;
 #endif
 
-namespace SimpleSpawner
+namespace SimpleSpawner;
+
+public static class MagnetarIntegration
 {
-    public static class MagnetarIntegration
+    private static bool? _isMagnetarLoaded;
+    public static bool IsMagnetarLoaded
     {
-        public static object ModuleInstance;
-        public static Dictionary<string, BindSetting> Binds = new Dictionary<string, BindSetting>();
-        public static MultiSelectSetting PlantSelectedSetting;
-        public static MultiSelectSetting ZombieSelectedSetting;
-        public static bool isSyncing = false;
-
-        public static bool IsMagnetarLoaded()
+        get
         {
-            try
+            if (!_isMagnetarLoaded.HasValue)
             {
-                return AppDomain.CurrentDomain.GetAssemblies()
-                    .Any(a => a.GetName().Name == "Magnetar Client" || a.GetName().Name == "Magnetar_Client");
+                try
+                {
+                    _isMagnetarLoaded = AppDomain.CurrentDomain.GetAssemblies()
+                        .Any(a => string.Equals(a.GetName().Name, "Magnetar Client", StringComparison.OrdinalIgnoreCase) ||
+                                  string.Equals(a.GetName().Name, "Magnetar_Client", StringComparison.OrdinalIgnoreCase));
+                }
+                catch
+                {
+                    _isMagnetarLoaded = false;
+                }
             }
-            catch { return false; }
+            return _isMagnetarLoaded.Value;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public static void Init()
+    {
+        if (!IsMagnetarLoaded) return;
+
+        try
+        {
+            MagnetarRunner.Init();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[SimpleSpawner] Magnetar integration failed to initialize: {ex.Message}");
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static void SyncPlantSelection(PlantType plantType)
+    {
+        if (!IsMagnetarLoaded) return;
+        MagnetarRunner.SyncPlantSelection(plantType);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static void SyncZombieSelection(ZombieType zombieType)
+    {
+        if (!IsMagnetarLoaded) return;
+        MagnetarRunner.SyncZombieSelection(zombieType);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static void LogWarning(string v)
+    {
+        if (IsMagnetarLoaded)
+        {
+            MagnetarRunner.LogWarning(v);
+        }
+        else
+        {
+#if MELONLOADER
+            MelonLogger.Warning($"[SimpleSpawner] {v}");
+#endif
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static bool GetKeyDown(string bindId, bool trueIfNone)
+    {
+        if (!IsMagnetarLoaded) return false;
+        return MagnetarRunner.GetKeyDown(bindId, trueIfNone);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static bool GetKey(string bindId, bool trueIfNone)
+    {
+        if (!IsMagnetarLoaded) return false;
+        return MagnetarRunner.GetKey(bindId, trueIfNone);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static bool Active()
+    {
+        if (!IsMagnetarLoaded) return true;
+        return MagnetarRunner.Active();
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static void SyncIfDirty()
+    {
+        if (!IsMagnetarLoaded) return;
+        MagnetarRunner.SyncIfDirty();
+    }
+
+    private static class MagnetarRunner
+    {
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void Init()
+        {
+            Magnetar_Client.Api.MagnetarApi.RegisterModule<SimpleSpawner>();
+            Magnetar_Client.Api.MagnetarApi.LogMsg("Simple Spawner loaded");
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void Init()
+        internal static void SyncPlantSelection(PlantType plantType)
         {
-            try
+            if (SimpleSpawner.instance?.PlantSelectedSetting == null) return;
+
+            var setting = SimpleSpawner.instance.PlantSelectedSetting;
+            foreach (int val in setting.SelectedValues.ToList())
             {
-                Type dynamicModuleType = CreateDynamicModuleType();
-                Magnetar_Client.Core.ModuleManager.showAddonCategory = true;
-                Magnetar_Client.Api.Api.RegisterModule(dynamicModuleType);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[SimpleSpawner] Failed to create dynamic Magnetar module: {ex}");
-            }
-        }
-
-        private static Type CreateDynamicModuleType()
-        {
-            var asmName = new AssemblyName("SimpleSpawner_DynamicMagnetar");
-            AssemblyBuilder asmBuilder = AssemblyBuilder.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.Run);
-            ModuleBuilder moduleBuilder = asmBuilder.DefineDynamicModule("Main");
-
-            TypeBuilder typeBuilder = moduleBuilder.DefineType(
-                "SimpleSpawner.DynamicSpawnerModule",
-                TypeAttributes.Public | TypeAttributes.Class,
-                typeof(Magnetar_Client.Modules.Module)
-            );
-
-            var implementedMethods = new HashSet<MethodInfo>();
-
-            // 1. Automatically implement all abstract properties (Name, Description, Author, etc.)
-            var properties = typeof(Magnetar_Client.Modules.Module).GetProperties(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
-            );
-
-            foreach (var prop in properties)
-            {
-                MethodInfo getMethod = prop.GetGetMethod(true);
-                MethodInfo setMethod = prop.GetSetMethod(true);
-
-                bool isGetAbstract = getMethod != null && getMethod.IsAbstract;
-                bool isSetAbstract = setMethod != null && setMethod.IsAbstract;
-
-                if (isGetAbstract || isSetAbstract)
-                {
-                    // Create a private backing field for the property
-                    FieldBuilder field = typeBuilder.DefineField($"_{prop.Name}", prop.PropertyType, FieldAttributes.Private);
-
-                    // Implement Getter
-                    if (getMethod != null && isGetAbstract)
-                    {
-                        MethodAttributes attrs = MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-                        MethodBuilder mbGet = typeBuilder.DefineMethod(getMethod.Name, attrs, prop.PropertyType, Type.EmptyTypes);
-
-                        ILGenerator il = mbGet.GetILGenerator();
-                        il.Emit(OpCodes.Ldarg_0);
-                        il.Emit(OpCodes.Ldfld, field);
-                        il.Emit(OpCodes.Ret);
-
-                        typeBuilder.DefineMethodOverride(mbGet, getMethod);
-                        implementedMethods.Add(getMethod);
-                    }
-
-                    // Implement Setter
-                    if (setMethod != null && isSetAbstract)
-                    {
-                        MethodAttributes attrs = MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-                        MethodBuilder mbSet = typeBuilder.DefineMethod(setMethod.Name, attrs, typeof(void), new[] { prop.PropertyType });
-
-                        ILGenerator il = mbSet.GetILGenerator();
-                        il.Emit(OpCodes.Ldarg_0);
-                        il.Emit(OpCodes.Ldarg_1);
-                        il.Emit(OpCodes.Stfld, field);
-                        il.Emit(OpCodes.Ret);
-
-                        typeBuilder.DefineMethodOverride(mbSet, setMethod);
-                        implementedMethods.Add(setMethod);
-                    }
-                }
+                if (val != (int)plantType) setting.Deselect(val);
             }
 
-            // 2. Implement any remaining abstract methods on Module with default returns
-            var methods = typeof(Magnetar_Client.Modules.Module).GetMethods(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
-            );
-
-            foreach (var method in methods)
+            if (plantType != PlantType.Nothing)
             {
-                if (method.IsAbstract && !implementedMethods.Contains(method))
-                {
-                    var paramTypes = method.GetParameters().Select(p => p.ParameterType).ToArray();
-                    MethodAttributes attrs = MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig;
-                    MethodBuilder mb = typeBuilder.DefineMethod(method.Name, attrs, method.ReturnType, paramTypes);
-                    ILGenerator il = mb.GetILGenerator();
-
-                    if (method.ReturnType != typeof(void))
-                    {
-                        if (method.ReturnType.IsValueType)
-                        {
-                            LocalBuilder local = il.DeclareLocal(method.ReturnType);
-                            il.Emit(OpCodes.Ldloca_S, local);
-                            il.Emit(OpCodes.Initobj, method.ReturnType);
-                            il.Emit(OpCodes.Ldloc, local);
-                        }
-                        else
-                        {
-                            il.Emit(OpCodes.Ldnull);
-                        }
-                    }
-                    il.Emit(OpCodes.Ret);
-
-                    typeBuilder.DefineMethodOverride(mb, method);
-                }
-            }
-
-            // 3. Define Constructor & Invoke SetupModule(this)
-            ConstructorBuilder ctorBuilder = typeBuilder.DefineConstructor(
-                MethodAttributes.Public,
-                CallingConventions.Standard,
-                Type.EmptyTypes
-            );
-
-            ILGenerator ctorIL = ctorBuilder.GetILGenerator();
-            ConstructorInfo baseCtor = typeof(Magnetar_Client.Modules.Module).GetConstructor(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
-                null,
-                Type.EmptyTypes,
-                null
-            );
-
-            if (baseCtor != null)
-            {
-                ctorIL.Emit(OpCodes.Ldarg_0);
-                ctorIL.Emit(OpCodes.Call, baseCtor);
-            }
-
-            MethodInfo setupMethod = typeof(MagnetarIntegration).GetMethod(nameof(SetupModule), BindingFlags.Public | BindingFlags.Static);
-            ctorIL.Emit(OpCodes.Ldarg_0);
-            ctorIL.Emit(OpCodes.Call, setupMethod);
-            ctorIL.Emit(OpCodes.Ret);
-
-            // 4. Override OnLanguageChanged
-            MethodInfo onLangMethod = typeof(Magnetar_Client.Modules.Module).GetMethod("OnLanguageChanged", BindingFlags.Public | BindingFlags.Instance);
-            if (onLangMethod != null)
-            {
-                MethodBuilder overrideMethod = typeBuilder.DefineMethod(
-                    "OnLanguageChanged",
-                    MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
-                    typeof(void),
-                    Type.EmptyTypes
-                );
-
-                ILGenerator il = overrideMethod.GetILGenerator();
-                if (!onLangMethod.IsAbstract)
-                {
-                    il.Emit(OpCodes.Ldarg_0);
-                    il.Emit(OpCodes.Call, onLangMethod);
-                }
-                il.Emit(OpCodes.Call, typeof(MagnetarIntegration).GetMethod(nameof(OnLanguageChangedHook), BindingFlags.Public | BindingFlags.Static));
-                il.Emit(OpCodes.Ret);
-
-                typeBuilder.DefineMethodOverride(overrideMethod, onLangMethod);
-            }
-
-            return typeBuilder.CreateType();
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void SetupModule(object instanceObj)
-        {
-            var module = (Magnetar_Client.Modules.Module)instanceObj;
-            ModuleInstance = module;
-
-            module.Name = "Simple Spawner";
-            module.Description = "A <color=red>Simple Spawner</color> mod for Pvz Fusion.";
-            module.Author = "Tproplay";
-            module.SearchHints = "simplespawner spawnmod pvzfusion spawner unitspawner spawnzombies spawnplants";
-            module.Category = ModuleCategory.Addon;
-            module.Active = true;
-
-            // --- 1. Entity Selection Category ---
-            module.CreateCategory("Entities");
-
-            PlantSelectedSetting = new MultiSelectSetting("Select Plant", typeof(PlantType))
-            {
-                MaxSelection = 1,
-                CustomNames = Magnetar_Client.Modules.Module.TranslatedNames(typeof(PlantType)),
-                Blacklist = Magnetar_Client.Modules.Module.Banned.PlantTypeBanned
-            };
-            PlantSelectedSetting.OnSelectionChanged = (id, selected) =>
-            {
-                if (isSyncing) return;
-                if (selected)
-                {
-                    UpdateHandler.plantTypeselected = (PlantType)id;
-                    foreach (int val in PlantSelectedSetting.SelectedValues.ToList())
-                    {
-                        if (val != id) PlantSelectedSetting.Deselect(val);
-                    }
-                }
-                else if ((int)UpdateHandler.plantTypeselected == id)
-                {
-                    UpdateHandler.plantTypeselected = PlantType.Nothing;
-                }
-            };
-            module.AddSettings(PlantSelectedSetting);
-
-            ZombieSelectedSetting = new MultiSelectSetting("Select Zombie", typeof(ZombieType))
-            {
-                MaxSelection = 1,
-                CustomNames = Magnetar_Client.Modules.Module.TranslatedNames(typeof(ZombieType)),
-                Blacklist = Magnetar_Client.Modules.Module.Banned.ZombieTypeBanned
-            };
-            ZombieSelectedSetting.OnSelectionChanged = (id, selected) =>
-            {
-                if (isSyncing) return;
-                if (selected)
-                {
-                    UpdateHandler.zombieTypeselected = (ZombieType)id;
-                    foreach (int val in ZombieSelectedSetting.SelectedValues.ToList())
-                    {
-                        if (val != id) ZombieSelectedSetting.Deselect(val);
-                    }
-                }
-                else if ((int)UpdateHandler.zombieTypeselected == id)
-                {
-                    UpdateHandler.zombieTypeselected = ZombieType.Nothing;
-                }
-            };
-            module.AddSettings(ZombieSelectedSetting);
-            module.EndCategory();
-
-            // --- 2. Dynamic Keybind Categories ---
-            var categories = Config.AllBinds.GroupBy(b => b.Category);
-            foreach (var group in categories)
-            {
-                module.CreateCategory(group.Key);
-                foreach (var bindDef in group)
-                {
-                    var keyList = new List<KeyCode>(bindDef.Keys);
-                    var bind = new BindSetting(bindDef.DisplayName, keyList);
-                    Binds[bindDef.Id] = bind;
-                    module.AddSettings(bind);
-                }
-                module.EndCategory();
+                setting.Select((int)plantType);
             }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void OnLanguageChangedHook()
+        internal static void SyncZombieSelection(ZombieType zombieType)
         {
-            if (ModuleInstance != null)
+            if (SimpleSpawner.instance?.ZombieSelectedSetting == null) return;
+
+            var setting = SimpleSpawner.instance.ZombieSelectedSetting;
+            foreach (int val in setting.SelectedValues.ToList())
             {
-                if (PlantSelectedSetting != null)
-                    PlantSelectedSetting.CustomNames = Magnetar_Client.Modules.Module.TranslatedNames(typeof(PlantType));
-                if (ZombieSelectedSetting != null)
-                    ZombieSelectedSetting.CustomNames = Magnetar_Client.Modules.Module.TranslatedNames(typeof(ZombieType));
+                if (val != (int)zombieType) setting.Deselect(val);
+            }
+
+            if (zombieType != ZombieType.Nothing)
+            {
+                setting.Select((int)zombieType);
             }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static bool GetKeyDown(string id, bool trueIfNone)
+        internal static void LogWarning(string v)
         {
-            if (ModuleInstance != null && Binds.TryGetValue(id, out var bind))
+            Magnetar_Client.Api.MagnetarApi.LogWarning(v);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static bool GetKeyDown(string bindId, bool trueIfNone)
+        {
+            if (SimpleSpawner.instance != null && SimpleSpawner.instance.Binds.TryGetValue(bindId, out var bind))
             {
                 return Config.CheckChordDown(bind.BindKeys, trueIfNone);
             }
@@ -302,9 +168,9 @@ namespace SimpleSpawner
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static bool GetKey(string id, bool trueIfNone)
+        internal static bool GetKey(string bindId, bool trueIfNone)
         {
-            if (ModuleInstance != null && Binds.TryGetValue(id, out var bind))
+            if (SimpleSpawner.instance != null && SimpleSpawner.instance.Binds.TryGetValue(bindId, out var bind))
             {
                 return Config.CheckChordHeld(bind.BindKeys, trueIfNone);
             }
@@ -312,72 +178,20 @@ namespace SimpleSpawner
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static bool Active()
+        internal static bool Active()
         {
-            if (ModuleInstance is Magnetar_Client.Modules.Module mod)
-            {
-                return mod.Active;
-            }
-            return false;
+            return SimpleSpawner.instance == null || SimpleSpawner.instance.Active;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void SyncPlantSelection(PlantType plantType)
+        internal static void SyncIfDirty()
         {
-            if (PlantSelectedSetting == null) return;
-
-            isSyncing = true;
-            try
-            {
-                foreach (int val in PlantSelectedSetting.SelectedValues.ToList())
-                {
-                    if (val != (int)plantType) PlantSelectedSetting.Deselect(val);
-                }
-
-                if (plantType != PlantType.Nothing)
-                {
-                    PlantSelectedSetting.Select((int)plantType);
-                }
-            }
-            finally
-            {
-                isSyncing = false;
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void SyncZombieSelection(ZombieType zombieType)
-        {
-            if (ZombieSelectedSetting == null) return;
-
-            isSyncing = true;
-            try
-            {
-                foreach (int val in ZombieSelectedSetting.SelectedValues.ToList())
-                {
-                    if (val != (int)zombieType) ZombieSelectedSetting.Deselect(val);
-                }
-
-                if (zombieType != ZombieType.Nothing)
-                {
-                    ZombieSelectedSetting.Select((int)zombieType);
-                }
-            }
-            finally
-            {
-                isSyncing = false;
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void SyncIfDirty()
-        {
-            if (ModuleInstance == null) return;
+            if (SimpleSpawner.instance == null) return;
             bool dirty = false;
 
             foreach (var bind in Config.AllBinds)
             {
-                if (Binds.TryGetValue(bind.Id, out var magnetarBind))
+                if (SimpleSpawner.instance.Binds.TryGetValue(bind.Id, out var magnetarBind))
                 {
                     var magnetarKeys = magnetarBind.BindKeys ?? new List<KeyCode>();
                     string magnetarSerialized = Config.SerializeKeys(magnetarKeys);
@@ -400,17 +214,91 @@ namespace SimpleSpawner
 #endif
             }
         }
+    }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void LogDebug(string message)
+    public class SimpleSpawner : Magnetar_Client.Modules.Module
+    {
+        public override string Name { get; set; } = "Simple Spawner";
+        public override string Description { get; set; } = "A <color=red>Simple Spawner</color> mod for Pvz Fusion.";
+        public override string SearchHints { get; set; } = "simplespawner spawnmod pvzfusion spawner unitspawner spawnzombies spawnplants";
+
+        public override Magnetar_Client.Modules.ModuleCategory Category { get; set; } = Magnetar_Client.Modules.ModuleCategory.Addon;
+        public override bool Active { get; set; } = true;
+        public override bool defaultActive { get; } = true;
+
+        public static SimpleSpawner instance;
+
+        public Magnetar_Client.UI.Setting.MultiSelectSetting PlantSelectedSetting;
+        public Magnetar_Client.UI.Setting.MultiSelectSetting ZombieSelectedSetting;
+        public Dictionary<string, Magnetar_Client.UI.Setting.BindSetting> Binds = new(StringComparer.OrdinalIgnoreCase);
+
+        public SimpleSpawner()
         {
-            Magnetar_Client.Utils.Magnetar_Logger.DebugLogger.Msg(message);
+            instance = this;
+
+            CreateCategory("Entities");
+
+            PlantSelectedSetting = new Magnetar_Client.UI.Setting.MultiSelectSetting("Select Plant", typeof(PlantType))
+            {
+                MaxSelection = 1,
+                CustomNames = Magnetar_Client.Utils.Translator.TranslateEnum(typeof(PlantType)),
+                Blacklist = Banned.PlantTypeBanned,
+                OnSelectionChanged = (id, selected) =>
+                {
+                    if (selected)
+                    {
+                        UpdateHandler.plantTypeselected = (PlantType)id;
+                    }
+                    else if ((int)UpdateHandler.plantTypeselected == id)
+                    {
+                        UpdateHandler.plantTypeselected = PlantType.Nothing;
+                    }
+                },
+            };
+            AddSettings(PlantSelectedSetting);
+
+            ZombieSelectedSetting = new Magnetar_Client.UI.Setting.MultiSelectSetting("Select Zombie", typeof(ZombieType))
+            {
+                MaxSelection = 1,
+                CustomNames = Magnetar_Client.Utils.Translator.TranslateEnum(typeof(ZombieType)),
+                Blacklist = Banned.ZombieTypeBanned,
+                OnSelectionChanged = (id, selected) =>
+                {
+                    if (selected)
+                    {
+                        UpdateHandler.zombieTypeselected = (ZombieType)id;
+                    }
+                    else if ((int)UpdateHandler.zombieTypeselected == id)
+                    {
+                        UpdateHandler.zombieTypeselected = ZombieType.Nothing;
+                    }
+                }
+            };
+            AddSettings(ZombieSelectedSetting);
+            EndCategory();
+
+            var categories = Config.AllBinds.GroupBy(b => b.Category);
+            foreach (var group in categories)
+            {
+                CreateCategory(group.Key);
+                foreach (var bindDef in group)
+                {
+                    var keyList = new List<KeyCode>(bindDef.Keys);
+                    var bind = new Magnetar_Client.UI.Setting.BindSetting(bindDef.DisplayName, keyList);
+                    Binds[bindDef.Id] = bind;
+                    AddSettings(bind);
+                }
+                EndCategory();
+            }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void LogError(string message)
+        public override void OnLanguageChanged()
         {
-            Magnetar_Client.Utils.Magnetar_Logger.DebugLogger.Error(message);
+            if (PlantSelectedSetting != null)
+                PlantSelectedSetting.CustomNames = Magnetar_Client.Utils.Translator.TranslateEnum(typeof(PlantType));
+
+            if (ZombieSelectedSetting != null)
+                ZombieSelectedSetting.CustomNames = Magnetar_Client.Utils.Translator.TranslateEnum(typeof(ZombieType));
         }
     }
 }
