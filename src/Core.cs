@@ -59,8 +59,7 @@ namespace SimpleSpawner
             ClassInjector.RegisterTypeInIl2Cpp<CoreUpdater>();
             AddComponent<CoreUpdater>();
 
-            MagnetarLoaded = MagnetarIntegration.IsMagnetarLoaded;
-            if (MagnetarLoaded)
+            if (MagnetarIntegration.IsMagnetarLoaded)
             {
                 MagnetarIntegration.Init();
             }
@@ -68,7 +67,7 @@ namespace SimpleSpawner
 
         public void OnApplicationQuit()
         {
-            if (MagnetarLoaded)
+            if (MagnetarIntegration.IsMagnetarLoaded)
             {
                 MagnetarIntegration.SyncIfDirty();
             }

@@ -1,113 +1,108 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>SimpleSpawner</RootNamespace>
-    <AssemblyName>SimpleSpawner</AssemblyName>
-    <Configurations>Melonloader;Bepinex;Debug;Release</Configurations>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <Nullable>disable</Nullable>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<RootNamespace>SimpleSpawner</RootNamespace>
+		<AssemblyName>SimpleSpawner</AssemblyName>
+		<Configurations>Melonloader;Bepinex</Configurations>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<Nullable>disable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<AssemblySearchPaths>{HintPathFromItem};{RawFileName}</AssemblySearchPaths>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Melonloader'">
-    <DefineConstants>TRACE;MELONLOADER</DefineConstants>
-    <OutputPath>bin\Melonloader\</OutputPath>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Melonloader'">
+		<DefineConstants>TRACE;MELONLOADER</DefineConstants>
+		<OutputPath>bin\Melonloader\</OutputPath>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Bepinex'">
-    <DefineConstants>TRACE;BEPINEX</DefineConstants>
-    <OutputPath>bin\Bepinex\</OutputPath>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
+	<ItemDefinitionGroup>
+		<Reference>
+			<Private>false</Private>
+		</Reference>
+	</ItemDefinitionGroup>
 
-  <ItemGroup Condition="'$(Configuration)' == 'Melonloader'">
-    <Reference Include="0Harmony">
-      <HintPath>References\Melonloader\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>References\Melonloader\Il2Cpp\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppInterop.Common">
-      <HintPath>References\Melonloader\Il2CppInterop.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppInterop.Runtime">
-      <HintPath>References\Melonloader\Il2CppInterop.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2Cppmscorlib">
-      <HintPath>References\Melonloader\Il2Cpp\Il2Cppmscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem" Condition="Exists('References\Melonloader\Il2Cpp\Il2CppSystem.dll')">
-      <HintPath>References\Melonloader\Il2Cpp\Il2CppSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Core" Condition="Exists('References\Melonloader\Il2Cpp\Il2CppSystem.Core.dll')">
-      <HintPath>References\Melonloader\Il2Cpp\Il2CppSystem.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="MelonLoader">
-      <HintPath>References\Melonloader\MelonLoader.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>References\Melonloader\Il2Cpp\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>References\Melonloader\Il2Cpp\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>References\Melonloader\Il2Cpp\UnityEngine.IMGUIModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>References\Melonloader\Il2Cpp\UnityEngine.InputLegacyModule.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Bepinex'">
+		<DefineConstants>TRACE;BEPINEX</DefineConstants>
+		<OutputPath>bin\Bepinex\</OutputPath>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
 
-  <ItemGroup Condition="'$(Configuration)' == 'Bepinex'">
-    <Reference Include="0Harmony">
-      <HintPath>References\Bepinex\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>References\Bepinex\Il2Cpp\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx.Core">
-      <HintPath>References\Bepinex\BepInEx.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx.Unity.IL2CPP">
-      <HintPath>References\Bepinex\BepInEx.Unity.IL2CPP.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppInterop.Common">
-      <HintPath>References\Bepinex\Il2CppInterop.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppInterop.Runtime">
-      <HintPath>References\Bepinex\Il2CppInterop.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2Cppmscorlib">
-      <HintPath>References\Bepinex\Il2Cpp\Il2Cppmscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem" Condition="Exists('References\Bepinex\Il2Cpp\Il2CppSystem.dll')">
-      <HintPath>References\Bepinex\Il2Cpp\Il2CppSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Core" Condition="Exists('References\Bepinex\Il2Cpp\Il2CppSystem.Core.dll')">
-      <HintPath>References\Bepinex\Il2Cpp\Il2CppSystem.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>References\Bepinex\Il2Cpp\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>References\Bepinex\Il2Cpp\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>References\Bepinex\Il2Cpp\UnityEngine.IMGUIModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>References\Bepinex\Il2Cpp\UnityEngine.InputLegacyModule.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup Condition="'$(Configuration)' == 'Melonloader'">
+		<Reference Include="0Harmony">
+			<HintPath>References\Melonloader\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+			<HintPath>References\Melonloader\Il2Cpp\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="Il2CppInterop.Common">
+			<HintPath>References\Melonloader\Il2CppInterop.Common.dll</HintPath>
+		</Reference>
+		<Reference Include="Il2CppInterop.Runtime">
+			<HintPath>References\Melonloader\Il2CppInterop.Runtime.dll</HintPath>
+		</Reference>
+		<Reference Include="Il2Cppmscorlib">
+			<HintPath>References\Melonloader\Il2Cpp\Il2Cppmscorlib.dll</HintPath>
+		</Reference>
+		<Reference Include="MelonLoader">
+			<HintPath>References\Melonloader\MelonLoader.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>References\Melonloader\Il2Cpp\UnityEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+			<HintPath>References\Melonloader\Il2Cpp\UnityEngine.CoreModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.IMGUIModule">
+			<HintPath>References\Melonloader\Il2Cpp\UnityEngine.IMGUIModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.InputLegacyModule">
+			<HintPath>References\Melonloader\Il2Cpp\UnityEngine.InputLegacyModule.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Magnetar Client">
-      <HintPath>References\Magnetar Client.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup Condition="'$(Configuration)' == 'Bepinex'">
+		<Reference Include="0Harmony">
+			<HintPath>References\Bepinex\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+			<HintPath>References\Bepinex\Il2Cpp\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx.Core">
+			<HintPath>References\Bepinex\BepInEx.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx.Unity.IL2CPP">
+			<HintPath>References\Bepinex\BepInEx.Unity.IL2CPP.dll</HintPath>
+		</Reference>
+		<Reference Include="Il2CppInterop.Common">
+			<HintPath>References\Bepinex\Il2CppInterop.Common.dll</HintPath>
+		</Reference>
+		<Reference Include="Il2CppInterop.Runtime">
+			<HintPath>References\Bepinex\Il2CppInterop.Runtime.dll</HintPath>
+		</Reference>
+		<Reference Include="Il2Cppmscorlib">
+			<HintPath>References\Bepinex\Il2Cpp\Il2Cppmscorlib.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>References\Bepinex\Il2Cpp\UnityEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+			<HintPath>References\Bepinex\Il2Cpp\UnityEngine.CoreModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.IMGUIModule">
+			<HintPath>References\Bepinex\Il2Cpp\UnityEngine.IMGUIModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.InputLegacyModule">
+			<HintPath>References\Bepinex\Il2Cpp\UnityEngine.InputLegacyModule.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Magnetar Client">
+			<HintPath>References\Magnetar Client.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
 </Project>

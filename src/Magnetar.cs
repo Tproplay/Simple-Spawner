@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using MelonLoader;
 
 
 #if MELONLOADER
+using MelonLoader;
 using Il2Cpp;
 #endif
 
