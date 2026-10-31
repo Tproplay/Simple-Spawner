@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup Condition="'$(Configuration)' == '' Or '$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
+		<Configuration>Melonloader</Configuration>
+	</PropertyGroup>
+
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<RootNamespace>SimpleSpawner</RootNamespace>

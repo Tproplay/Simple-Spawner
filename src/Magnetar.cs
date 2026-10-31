@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-
 
 #if MELONLOADER
 using MelonLoader;
@@ -115,6 +115,44 @@ public static class MagnetarIntegration
         {
             Magnetar_Client.Api.MagnetarApi.RegisterModule<SimpleSpawner>();
             Magnetar_Client.Api.MagnetarApi.LogMsg("Simple Spawner loaded");
+
+            TryRestoreActiveFromProfile();
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void TryRestoreActiveFromProfile()
+        {
+            if (SimpleSpawner.instance == null || !SimpleSpawner.instance.Active) return;
+
+            try
+            {
+                string profilePath = Magnetar_Client.Api.PathsManager.GetProfilePath(Magnetar_Client.Utils.ProfileManager.CurrentProfile);
+                if (File.Exists(profilePath))
+                {
+                    string text = File.ReadAllText(profilePath);
+                    int modIdx = text.IndexOf("\"Simple Spawner\"", StringComparison.OrdinalIgnoreCase);
+                    if (modIdx >= 0)
+                    {
+                        int activeIdx = text.IndexOf("\"Active\"", modIdx, StringComparison.OrdinalIgnoreCase);
+                        if (activeIdx >= 0 && activeIdx - modIdx < 200)
+                        {
+                            int colonIdx = text.IndexOf(':', activeIdx);
+                            if (colonIdx >= 0)
+                            {
+                                string sub = text.Substring(colonIdx + 1, Math.Min(20, text.Length - colonIdx - 1)).TrimStart();
+                                if (sub.StartsWith("false", StringComparison.OrdinalIgnoreCase) && SimpleSpawner.instance.Active)
+                                {
+                                    SimpleSpawner.instance.Toggle();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Silently ignore if profile is missing or unreadable
+            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
