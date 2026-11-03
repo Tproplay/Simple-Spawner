@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using HarmonyLib;
 
@@ -152,6 +152,7 @@ namespace SimpleSpawner
             if (Config.KeyPetHorse.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetHorse); return; }
             if (Config.KeyPetImp.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetImp); return; }
             if (Config.KeyPetKirov.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetKirov); return; }
+            if (Config.KeyPetPaper.IsDown()) { MiniPet.SetPet(board, mousePos, PetType.PetPaper); return; }
 
             // ========================================================
             // 6. 1-KEY BASE SPAWNS & CONTROLS

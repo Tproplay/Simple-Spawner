@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,7 +13,7 @@ namespace SimpleSpawner
 
     public static class AssemblyInfo
     {
-        public const string Version = "4.0.1";
+        public const string Version = "4.1.0";
         public const string Name = "Simple Spawner";
         public const string Author = "Tproplay";
     }
@@ -112,6 +112,7 @@ namespace SimpleSpawner
         public static readonly KeyBind KeyPetHorse = Register("PetHorse", "Spawn Pet Horse", "Pets", KeyCode.RightControl, KeyCode.Keypad6);
         public static readonly KeyBind KeyPetImp = Register("PetImp", "Spawn Pet Imp", "Pets", KeyCode.RightControl, KeyCode.Keypad7);
         public static readonly KeyBind KeyPetKirov = Register("PetKirov", "Spawn Pet Kirov", "Pets", KeyCode.RightControl, KeyCode.Keypad8);
+        public static readonly KeyBind KeyPetPaper = Register("PetPaper", "Spawn Pet Paper", "Pets", KeyCode.RightControl, KeyCode.Keypad9);
 
         // --- 6. Items ---
         public static readonly KeyBind KeySpawnFertilizer = Register("SpawnFertilizer", "Spawn Fertilizer", "Items", KeyCode.Keypad1);

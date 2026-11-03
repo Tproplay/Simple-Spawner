@@ -1218,6 +1218,12 @@
             Static method to add settings to the module. Call this in the constructor of your module with all the settings you want to add.
             </summary>
         </member>
+        <member name="M:Magnetar_Client.Modules.Module.AddSettings(System.Collections.Generic.IEnumerable{Magnetar_Client.UI.Setting.Setting})">
+            <summary>
+            Adds a collection of settings to the module. Call this in the constructor of your module with all the settings you want to add.
+            </summary>
+            <param name="settings">The collection of settings to add.</param>
+        </member>
         <member name="M:Magnetar_Client.Modules.Module.OnLanguageChanged">
             <summary>
             Runs when the mod's language is changed.
@@ -1247,6 +1253,14 @@
             <summary>
             Creates a new Category. Use <see cref="M:Magnetar_Client.Modules.Module.EndCategory"/> to define the end.
             </summary>
+        </member>
+        <member name="M:Magnetar_Client.Modules.Module.CreateCategory(System.String,System.Collections.Generic.IEnumerable{Magnetar_Client.UI.Setting.Setting},System.Boolean)">
+            <summary>
+            Creates a new Category containing the specified settings and automatically ends it.
+            </summary>
+            <param name="name">The display name of the category.</param>
+            <param name="settings">The collection of settings to add to the category.</param>
+            <param name="defaultExpanded">Whether the category is expanded by default.</param>
         </member>
         <member name="M:Magnetar_Client.Modules.Module.EndCategory">
             <summary>
@@ -1573,6 +1587,11 @@
         <member name="P:Magnetar_Client.UI.Setting.BindSetting.BindKeys">
             <summary>
             Gets or sets the list of bound keys forming the shortcut chord.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.UI.Setting.BindSetting.Value">
+            <summary>
+            Alias for <see cref="P:Magnetar_Client.UI.Setting.BindSetting.BindKeys"/>
             </summary>
         </member>
         <member name="M:Magnetar_Client.UI.Setting.BindSetting.#ctor(System.String,System.Collections.Generic.List{UnityEngine.KeyCode})">

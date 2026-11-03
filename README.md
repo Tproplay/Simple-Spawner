@@ -44,6 +44,7 @@ A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* that allows yo
 | **`Right Ctrl` + `Numpad 6`** | **Spawn Pet Horse** |
 | **`Right Ctrl` + `Numpad 7`** | **Spawn Pet Imp** |
 | **`Right Ctrl` + `Numpad 8`** | **Spawn Pet Kirov** |
+| **`Right Ctrl` + `Numpad 9`** | **Spawn Pet Paper** |
 
 ### Item Spawning
 
@@ -71,4 +72,3 @@ A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* that allows yo
 2. Click on a **Plant** or **Zombie** card to select it.
 3. Close the Almanac and hover your mouse over the battlefield.
 4. Press **`[`** (for plants) or **`]`** (for zombies) to spawn!
-
