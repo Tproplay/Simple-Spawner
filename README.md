@@ -63,8 +63,9 @@ A lightweight **MelonLoader** mod for *Plants vs. Zombies Fusion* that allows yo
 **You can Customize these keys by editing `UserData\MelonPreferences.cfg`**
 
 ## 🛠 Installation
-1. Ensure you have **MelonLoader** installed for *PlantsVsZombiesRH*.
-2. Place the compiled `SimpleSpawner.dll` into your game's `Mods` folder.
+1. Ensure you have **MelonLoader** (or **BepInEx**) installed for *PlantsVsZombiesRH*.
+2. For MelonLoader, place `SimpleSpawner.melonloader.dll` into your game's `Mods` folder.
+   For BepInEx, place `SimpleSpawner.bepinex.dll` into your `BepInEx\plugins` folder.
 3. Launch the game.
 
 ## 📝 How to Use

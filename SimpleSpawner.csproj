@@ -17,6 +17,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Melonloader'">
+		<TargetName>SimpleSpawner.Melonloader</TargetName>
 		<DefineConstants>TRACE;MELONLOADER</DefineConstants>
 		<OutputPath>bin\Melonloader\</OutputPath>
 		<Optimize>true</Optimize>
@@ -29,6 +30,7 @@
 	</ItemDefinitionGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Bepinex'">
+		<TargetName>SimpleSpawner.Bepinex</TargetName>
 		<DefineConstants>TRACE;BEPINEX</DefineConstants>
 		<OutputPath>bin\Bepinex\</OutputPath>
 		<Optimize>true</Optimize>
