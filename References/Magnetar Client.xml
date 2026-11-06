@@ -1678,6 +1678,85 @@
             <param name="y">Reference to the vertical layout offset.</param>
             <param name="width">The total available layout width.</param>
         </member>
+        <member name="T:Magnetar_Client.UI.Setting.ColorSetting">
+            <summary>
+            A setting module representing an editable color with a hex code input field and an interactive color preview swatch.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.Setting.ColorSetting.DefaultValue">
+            <summary>
+            The default color restored when <see cref="M:Magnetar_Client.UI.Setting.ColorSetting.Reset"/> is executed.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.UI.Setting.ColorSetting.SupportAlpha">
+            <summary>
+            Indicates whether alpha transparency is supported in the hex string format.
+            When <see langword="true"/>, formats as #RRGGBBAA; when <see langword="false"/>, formats as #RRGGBB.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.UI.Setting.ColorSetting.OnValueChanging">
+            <summary>
+            Event invoked immediately before <see cref="P:Magnetar_Client.UI.Setting.ColorSetting.Value"/> changes.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.UI.Setting.ColorSetting.OnValueChanged">
+            <summary>
+            Event invoked after <see cref="P:Magnetar_Client.UI.Setting.ColorSetting.Value"/> changes.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.UI.Setting.ColorSetting.Value">
+            <summary>
+            Gets or sets the validated <see cref="T:UnityEngine.Color"/> value.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.UI.Setting.ColorSetting.HexValue">
+            <summary>
+            Gets or sets the color as an HTML hex code string (e.g. "#FF5500" or "#FF5500FF").
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.ColorSetting.#ctor(System.String,UnityEngine.Color,System.Boolean)">
+            <summary>
+            Initializes a new instance of <see cref="T:Magnetar_Client.UI.Setting.ColorSetting"/> with a display name and initial color.
+            </summary>
+            <param name="name">The display name of the setting.</param>
+            <param name="defaultColor">The initial and default <see cref="T:UnityEngine.Color"/> value.</param>
+            <param name="supportAlpha">Whether the hex code supports alpha transparency.</param>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.ColorSetting.#ctor(System.String,System.String,System.Boolean)">
+            <summary>
+            Initializes a new instance of <see cref="T:Magnetar_Client.UI.Setting.ColorSetting"/> with a display name and initial hex code.
+            </summary>
+            <param name="name">The display name of the setting.</param>
+            <param name="defaultHex">The initial and default hex string (e.g. "#FFFFFF").</param>
+            <param name="supportAlpha">Whether the hex code supports alpha transparency.</param>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.ColorSetting.Reset">
+            <summary>
+            Restores the color back to <see cref="F:Magnetar_Client.UI.Setting.ColorSetting.DefaultValue"/>.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.ColorSetting.Draw(System.Single@,System.Single)">
+            <summary>
+            Renders the label, color swatch preview box, hex input field, and reset button in IMGUI layout.
+            </summary>
+            <param name="y">Reference to the vertical layout offset.</param>
+            <param name="width">The total available layout width.</param>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.ColorSetting.TryParseColor(System.String,UnityEngine.Color@)">
+            <summary>
+            Parses an HTML hex color string with or without a leading '#' character.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.ColorSetting.ColorToHex(UnityEngine.Color,System.Boolean)">
+            <summary>
+            Converts a <see cref="T:UnityEngine.Color"/> to an HTML hex color string.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.ColorSetting.FilterHexInput(System.String)">
+            <summary>
+            Filters raw input text to only allow '#' and valid hex characters (0-9, A-F) up to 9 characters.
+            </summary>
+        </member>
         <member name="T:Magnetar_Client.UI.Setting.ListStringSetting">
             <summary>
             A setting module representing a dynamic list of editable strings, supporting addition, deletion,
@@ -2735,9 +2814,41 @@
             Re-evaluates and applies <see cref="P:Magnetar_Client.UI.Setting.SectionSetting.TitleFormatter"/> to all current sections if defined.
             </summary>
         </member>
+        <member name="P:Magnetar_Client.UI.Setting.SectionSetting.HasDefaultSnapshots">
+            <summary>
+            Gets whether custom default section templates have been captured via <see cref="M:Magnetar_Client.UI.Setting.SectionSetting.SetAsDefault"/>.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.SectionSetting.SetAsDefault">
+            <summary>
+            Captures the current sections, their titles, expanded states, and child setting values as the default baseline.
+            When <see cref="M:Magnetar_Client.UI.Setting.SectionSetting.Reset"/> is triggered, the setting reverts back to these captured templates.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.SectionSetting.SaveAsDefault">
+            <summary>
+            Alias for <see cref="M:Magnetar_Client.UI.Setting.SectionSetting.SetAsDefault"/> to save the current sections as the default template state.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.SectionSetting.GetDefaultTitle(System.Int32)">
+            <summary>
+            Gets the default title for the section at the specified index, or <see langword="null"/> if no default is stored.
+            </summary>
+            <param name="index">The 0-based section index.</param>
+            <returns>The captured default title, or <see langword="null"/>.</returns>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.SectionSetting.ApplyDefaultValues(System.Int32,System.Collections.Generic.List{Magnetar_Client.UI.Setting.Setting})">
+            <summary>
+            Applies captured default snapshot values to the provided child settings list for the specified section index.
+            </summary>
+            <param name="index">The 0-based section index.</param>
+            <param name="childList">The list of child settings to populate.</param>
+        </member>
         <member name="M:Magnetar_Client.UI.Setting.SectionSetting.Reset">
             <summary>
-            Clears and repopulates the section list back to <see cref="P:Magnetar_Client.UI.Setting.SectionSetting.DefaultSectionCount"/> instances using <see cref="P:Magnetar_Client.UI.Setting.SectionSetting.TemplateFactory"/>.
+            Clears and repopulates the section list back to default instances.
+            If <see cref="M:Magnetar_Client.UI.Setting.SectionSetting.SetAsDefault"/> was invoked, restores the captured section templates and values;
+            otherwise creates <see cref="P:Magnetar_Client.UI.Setting.SectionSetting.DefaultSectionCount"/> fresh instances using <see cref="P:Magnetar_Client.UI.Setting.SectionSetting.TemplateFactory"/>.
             </summary>
         </member>
         <member name="M:Magnetar_Client.UI.Setting.SectionSetting.AddSection">
@@ -2791,200 +2902,184 @@
             Returns an enumerator that iterates through the active <see cref="T:Magnetar_Client.UI.Setting.SectionInstance"/> list.
             </summary>
         </member>
-        <member name="T:Magnetar_Client.UI.Setting.MultiSelectSetting">
+        <member name="T:Magnetar_Client.UI.Setting.BaseMultiSelectSetting">
             <summary>
-            A setting for having multiple options selectable from a list
+            Abstract base class defining common state, rendering, and lifecycle behavior for all multi-select settings.
             </summary>
         </member>
-        <member name="F:Magnetar_Client.UI.Setting.MultiSelectSetting.MaxSelection">
+        <member name="F:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.MaxSelection">
             <summary>
             The maximum number of items that can be selected simultaneously. Set to -1 for unlimited selection.
             </summary>
         </member>
-        <member name="P:Magnetar_Client.UI.Setting.MultiSelectSetting.Options">
-            <summary>
-            The map of all available options, where the key is the option's integer ID and the value is its internal name.
-            </summary>
-        </member>
-        <member name="F:Magnetar_Client.UI.Setting.MultiSelectSetting.SelectedValues">
-            <summary>
-            The collection of currently selected option IDs.
-            </summary>
-        </member>
-        <member name="F:Magnetar_Client.UI.Setting.MultiSelectSetting.DefaultSelectedValues">
-            <summary>
-            The fallback set of option IDs restored when <see cref="M:Magnetar_Client.UI.Setting.MultiSelectSetting.Reset"/> is executed.
-            </summary>
-        </member>
-        <member name="F:Magnetar_Client.UI.Setting.MultiSelectSetting.Blacklist">
-            <summary>
-            Option IDs explicitly forbidden from being selected or rendered in selection views.
-            </summary>
-        </member>
-        <member name="F:Magnetar_Client.UI.Setting.MultiSelectSetting.NameBlacklist">
+        <member name="F:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.NameBlacklist">
             <summary>
             Option internal names explicitly forbidden from being selected or rendered in selection views.
             </summary>
         </member>
-        <member name="P:Magnetar_Client.UI.Setting.MultiSelectSetting.EnumType">
-            <summary>
-            The underlying Enum type if this setting was constructed from an Enum.
-            </summary>
-        </member>
-        <member name="P:Magnetar_Client.UI.Setting.MultiSelectSetting.OnSelectionChanged">
-            <summary>
-            Callback triggered when an option's selection state changes.
-            First parameter is the option ID; second parameter is <c>true</c> if selected, <c>false</c> if deselected.
-            </summary>
-        </member>
-        <member name="P:Magnetar_Client.UI.Setting.MultiSelectSetting.OnWindowOpen">
+        <member name="P:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.OnWindowOpen">
             <summary>
             Action invoked when the selection view is opened.
             </summary>
         </member>
-        <member name="F:Magnetar_Client.UI.Setting.MultiSelectSetting.CustomNames">
-            <summary>
-            Optional dictionary providing localized or custom formatted display names overriding default names.
-            </summary>
-        </member>
-        <member name="F:Magnetar_Client.UI.Setting.MultiSelectSetting.DisplayAlphabetically">
+        <member name="F:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.DisplayAlphabetically">
             <summary>
             Whether the options inside the selection window should be sorted alphabetically by display name.
             </summary>
         </member>
-        <member name="P:Magnetar_Client.UI.Setting.MultiSelectSetting.Width">
+        <member name="P:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.Width">
             <summary>
             Optional fixed width for the selected option / count text display area.
             If greater than 0, the text will be horizontally centered inside this width.
             </summary>
         </member>
-        <member name="P:Magnetar_Client.UI.Setting.MultiSelectSetting.ShowCountText">
+        <member name="P:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.ShowCountText">
             <summary>
             Whether to display the selected count or option text next to the select button.
             Defaults to <c>true</c>.
             </summary>
         </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.#ctor(System.String)">
+        <member name="P:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.SelectedCount">
             <summary>
-            Initializes an empty <see cref="T:Magnetar_Client.UI.Setting.MultiSelectSetting"/> with the specified display name.
-            </summary>
-            <param name="name">The display name of the setting.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.#ctor(System.String,System.Type)">
-            <summary>
-            Initializes a new <see cref="T:Magnetar_Client.UI.Setting.MultiSelectSetting"/> populated with the integer values and names of an enum.
-            </summary>
-            <param name="name">The display name of the setting.</param>
-            <param name="enumType">The enum type whose entries define the selectable options.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.#ctor(System.String,System.Collections.Generic.Dictionary{System.Int32,System.String})">
-            <summary>
-            Initializes a new <see cref="T:Magnetar_Client.UI.Setting.MultiSelectSetting"/> populated from an existing dictionary of options.
-            </summary>
-            <param name="name">The display name of the setting.</param>
-            <param name="options">Dictionary mapping integer IDs to option display labels.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.#ctor(System.String,System.Collections.Generic.List{System.String})">
-            <summary>
-            Initializes a new <see cref="T:Magnetar_Client.UI.Setting.MultiSelectSetting"/> from a list of option strings.
-            Each item's list index is used as its option ID.
-            </summary>
-            <param name="name">The display name of the setting.</param>
-            <param name="options">List of option labels.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.#ctor(System.String,System.String[])">
-            <summary>
-            Initializes a new <see cref="T:Magnetar_Client.UI.Setting.MultiSelectSetting"/> from an array of option strings.
-            Each item's array index is used as its option ID.
-            </summary>
-            <param name="name">The display name of the setting.</param>
-            <param name="options">Array of option labels.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.GetDisplayName(System.Int32,System.String)">
-            <summary>
-            Resolves the user-facing display name for a given option ID. Checks <see cref="F:Magnetar_Client.UI.Setting.MultiSelectSetting.CustomNames"/> first,
-            then <see cref="P:Magnetar_Client.UI.Setting.MultiSelectSetting.Options"/>, and finally falls back to <paramref name="fallbackName"/> or the ID string.
-            </summary>
-            <param name="id">The option ID to look up.</param>
-            <param name="fallbackName">Fallback text to use if no key match is found.</param>
-            <returns>The resolved display string.</returns>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.AddOption(System.Int32,System.String)">
-            <summary>
-            Adds or updates an option in the available options dictionary.
-            </summary>
-            <param name="id">The unique identifier of the option.</param>
-            <param name="displayName">The label shown for the option.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.RemoveOption(System.Int32)">
-            <summary>
-            Removes an option from both available options and current selections.
-            </summary>
-            <param name="id">The option ID to remove.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.Toggle(System.Int32)">
-            <summary>
-            Toggles the selection status of the given option ID.
-            </summary>
-            <param name="id">The option ID to toggle.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.Select(System.Int32)">
-            <summary>
-            Selects an option if not already selected, not blacklisted, and within the <see cref="F:Magnetar_Client.UI.Setting.MultiSelectSetting.MaxSelection"/> bound.
-            </summary>
-            <param name="id">The option ID to select.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.Deselect(System.Int32)">
-            <summary>
-            Deselects the given option ID if it is currently selected.
-            </summary>
-            <param name="id">The option ID to deselect.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.IsSelected(System.Int32)">
-            <summary>
-            Checks whether an option ID is currently selected.
-            </summary>
-            <param name="id">The option ID to check.</param>
-            <returns><c>true</c> if selected; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.SetDirect(System.Int32)">
-            <summary>
-            Sets the selection directly to a single ID without firing <see cref="P:Magnetar_Client.UI.Setting.MultiSelectSetting.OnSelectionChanged"/> or checking <see cref="P:Magnetar_Client.UI.Setting.Setting.IsDisabled"/>.
-            </summary>
-            <param name="id">The option ID to select.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.SetDirect(System.Collections.Generic.IEnumerable{System.Int32})">
-            <summary>
-            Sets the selection directly to multiple IDs without firing <see cref="P:Magnetar_Client.UI.Setting.MultiSelectSetting.OnSelectionChanged"/> or checking <see cref="P:Magnetar_Client.UI.Setting.Setting.IsDisabled"/>.
-            </summary>
-            <param name="ids">Collection of option IDs to select.</param>
-        </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.Reset">
-            <summary>
-            Restores the selection set to match <see cref="F:Magnetar_Client.UI.Setting.MultiSelectSetting.DefaultSelectedValues"/>.
+            Gets the number of currently selected options.
             </summary>
         </member>
-        <member name="P:Magnetar_Client.UI.Setting.MultiSelectSetting.MultiSelectCountTextStyle">
+        <member name="P:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.OptionsCount">
+            <summary>
+            Gets the total number of configured options.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.GetPrimarySelectedDisplayName">
+            <summary>
+            Resolves the display label of the first selected option, or empty string if none are selected.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.ResolveDisplayName(System.Object,System.String)">
+            <summary>
+            Resolves the display label for the given option key, falling back to internal name or string representation.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.IsBlacklisted(System.Object,System.String)">
+            <summary>
+            Checks whether an option is blacklisted either by key or internal name.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.GetRenderableOptions">
+            <summary>
+            Yields all renderable options as tuples of (key, display label, internal name) filtering out blacklisted entries.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.IsSelectedRaw(System.Object)">
+            <summary>
+            Checks whether the option corresponding to the specified key is currently selected.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.ToggleRaw(System.Object)">
+            <summary>
+            Toggles the selection status of the specified option key.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.SelectRaw(System.Object)">
+            <summary>
+            Selects the option corresponding to the specified key.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.DeselectRaw(System.Object)">
+            <summary>
+            Deselects the option corresponding to the specified key.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.ClearSelections">
+            <summary>
+            Clears all currently selected options.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.SelectAll(System.Boolean)">
+            <summary>
+            Selects all available valid options, optionally caching the state as default.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.DeselectAll">
+            <summary>
+            Deselects all options.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.SetCurrentAsDefault">
+            <summary>
+            Captures the current selections as the default state for future resets.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.ExportSaveData">
+            <summary>
+            Exports the selection state into a persistent DTO for serialization.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.ImportSaveData(System.Object)">
+            <summary>
+            Restores the selection state from a deserialized JSON DTO or raw value.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.MultiSelectCountTextStyle">
             <summary>
             Gets a centered count text style with font size reduced to 70% of the setting label size.
             </summary>
         </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.Draw(System.Single@,System.Single)">
+        <member name="M:Magnetar_Client.UI.Setting.BaseMultiSelectSetting.Draw(System.Single@,System.Single)">
             <summary>
             Renders the setting row in the window, showing the label, current count (if enabled), select button, and reset button.
             </summary>
-            <param name="y">Reference to the vertical position accumulator.</param>
-            <param name="width">Total available width for this settings row.</param>
         </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.SelectAll(System.Boolean)">
+        <member name="T:Magnetar_Client.UI.Setting.MultiSelectSetting`1">
             <summary>
-            Selects all valid options (excluding blacklists) and optionally caches them as the default state.
+            A generic multi-select setting supporting arbitrary option key types <typeparamref name="T"/>
+            (e.g. <see cref="T:System.String"/>, <see cref="T:System.Int32"/>, or custom identifier types).
             </summary>
-            <param name="setDefault">If <c>true</c>, updates <see cref="F:Magnetar_Client.UI.Setting.MultiSelectSetting.DefaultSelectedValues"/> to match the current selection.</param>
         </member>
-        <member name="M:Magnetar_Client.UI.Setting.MultiSelectSetting.SetCurrentAsDefault">
+        <member name="P:Magnetar_Client.UI.Setting.MultiSelectSetting`1.Options">
             <summary>
-            Saves the current selection state into <see cref="F:Magnetar_Client.UI.Setting.MultiSelectSetting.DefaultSelectedValues"/> for subsequent reset operations.
+            The map of all available options, where the key is the option identifier and the value is its internal name.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.Setting.MultiSelectSetting`1.SelectedValues">
+            <summary>
+            The collection of currently selected option keys.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.Setting.MultiSelectSetting`1.DefaultSelectedValues">
+            <summary>
+            The fallback set of option keys restored when <see cref="M:Magnetar_Client.UI.Setting.MultiSelectSetting`1.Reset"/> is executed.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.Setting.MultiSelectSetting`1.Blacklist">
+            <summary>
+            Option keys explicitly forbidden from being selected or rendered in selection views.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.UI.Setting.MultiSelectSetting`1.OnSelectionChanged">
+            <summary>
+            Callback triggered when an option's selection state changes.
+            First parameter is the option key; second parameter is <c>true</c> if selected, <c>false</c> if deselected.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.Setting.MultiSelectSetting`1.CustomNames">
+            <summary>
+            Optional dictionary providing localized or custom formatted display names overriding default names.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.UI.Setting.StringMultiSelectSetting">
+            <summary>
+            A specialized <see cref="T:Magnetar_Client.UI.Setting.MultiSelectSetting`1"/> keyed by <see cref="T:System.String"/>, designed for dynamic collections
+            (e.g. file paths, external audio lists, mod names) where integer indices shift when options are modified externally.
+            </summary>
+        </member>
+        <member name="T:Magnetar_Client.UI.Setting.MultiSelectSetting">
+            <summary>
+            An integer-keyed multi-select setting primarily used for Enums and index-based collections.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.UI.Setting.MultiSelectSetting.EnumType">
+            <summary>
+            The underlying Enum type if this setting was constructed from an Enum.
             </summary>
         </member>
         <member name="T:Magnetar_Client.UI.Setting.SelectSetting">
@@ -3218,6 +3313,56 @@
             Gets or sets the vertical scroll position of the currently open dropdown list.
             </summary>
         </member>
+        <member name="P:Magnetar_Client.UI.WindowDrawing.DrawSetting.ActiveDropdownWindowRect">
+            <summary>
+            Gets or sets the bounding rectangle of the currently open dropdown list in parent window coordinates.
+            </summary>
+        </member>
+        <member name="P:Magnetar_Client.UI.WindowDrawing.DrawSetting.CurrentWindowGroupOffsetY">
+            <summary>
+            Vertical offset of the current scrollable group inside the active window.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.WindowDrawing.DrawSetting.dropdownScrollVelocity">
+            <summary>
+            Inertial scrolling velocity for dropdown menus.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.WindowDrawing.DrawSetting.dropdownIsSwiping">
+            <summary>
+            Whether the user is currently touch-swiping the dropdown list.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.WindowDrawing.DrawSetting.dropdownCandidateIndex">
+            <summary>
+            The index of the dropdown item candidate clicked on touch down.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.WindowDrawing.DrawSetting.dropdownTouchStart">
+            <summary>
+            The starting touch position when interaction begins on a dropdown.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.WindowDrawing.DrawSetting.dropdownTouchStartScroll">
+            <summary>
+            The initial scroll offset when touch interaction begins.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.WindowDrawing.DrawSetting.dropdownLastTouchY">
+            <summary>
+            The previous touch Y coordinate for calculating swipe velocity.
+            </summary>
+        </member>
+        <member name="F:Magnetar_Client.UI.WindowDrawing.DrawSetting.dropdownLastTouchTime">
+            <summary>
+            The unscaled time when the previous touch sample was recorded.
+            </summary>
+        </member>
+        <member name="M:Magnetar_Client.UI.WindowDrawing.DrawSetting.ResetDropdownState">
+            <summary>
+            Resets all dropdown interaction and scroll tracking states.
+            </summary>
+        </member>
         <member name="M:Magnetar_Client.UI.WindowDrawing.DrawSetting.HandleSelectSetting(Magnetar_Client.UI.Setting.SelectSetting,System.Single@,System.Single)">
             <summary>
             Renders a dropdown selection setting control and handles user interaction.
@@ -3228,7 +3373,7 @@
         </member>
         <member name="F:Magnetar_Client.UI.WindowDrawing.DrawSetting.activeMultiSelect">
             <summary>
-            Gets or sets the <see cref="T:Magnetar_Client.UI.Setting.MultiSelectSetting"/> currently displayed in the multi-select modal dialog.
+            Gets or sets the <see cref="T:Magnetar_Client.UI.Setting.BaseMultiSelectSetting"/> currently displayed in the multi-select modal dialog.
             </summary>
         </member>
         <member name="F:Magnetar_Client.UI.WindowDrawing.DrawSetting.multiSelectSearchQuery">
@@ -3256,7 +3401,7 @@
             Gets or sets the timestamp when the scroll slider position was last updated.
             </summary>
         </member>
-        <member name="M:Magnetar_Client.UI.WindowDrawing.DrawSetting.DrawMultiSelectWindow(UnityEngine.Rect,System.Object,System.Action)">
+        <member name="M:Magnetar_Client.UI.WindowDrawing.DrawSetting.DrawMultiSelectWindow(UnityEngine.Rect,Magnetar_Client.UI.Setting.BaseMultiSelectSetting,System.Action)">
             <summary>
             Renders the multi-select modal window dialog, including searching, scrolling, and toggle interaction.
             </summary>
