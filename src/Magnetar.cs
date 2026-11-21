@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using MelonLoader;
 
 
 #if MELONLOADER
@@ -75,7 +74,7 @@ public static class MagnetarIntegration
         else
         {
 #if MELONLOADER
-            MelonLogger.Warning($"[SimpleSpawner] {v}");
+            MelonLoader.MelonLogger.Warning($"[SimpleSpawner] {v}");
 #endif
         }
     }
